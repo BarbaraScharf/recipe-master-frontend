@@ -1,0 +1,54 @@
+/* Reset — sobrescreve o Bootstrap */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif !important; background: #f9f9f9 !important; color: #1a1a1a !important; }
+a { text-decoration: none !important; color: inherit !important; }
+
+/* Layout */
+.app-layout { display: flex; flex-direction: column; min-height: 100vh; }
+.app-body { display: flex; flex: 1; }
+.app-content { flex: 1; padding: 2rem; }
+
+/* Navbar */
+.navbar { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 1rem 2rem !important; background: #e25822 !important; color: #fff !important; border-radius: 0 !important; }
+.navbar-brand a { font-size: 1.4rem !important; font-weight: 700 !important; color: #fff !important; }
+.navbar-nav { display: flex !important; gap: 1.5rem !important; flex-direction: row !important; }
+.navbar-nav a { color: #fff !important; font-weight: 500 !important; }
+.navbar-nav a:hover { opacity: 0.75 !important; }
+
+/* Sidebar */
+.sidebar { width: 220px; background: #fff; border-right: 1px solid #e0e0e0; padding: 1.5rem 1rem; }
+.sidebar-nav { display: flex; flex-direction: column; gap: 0.75rem; }
+.sidebar-nav a { padding: 0.5rem 0.75rem; border-radius: 6px; color: #333 !important; }
+.sidebar-nav a:hover, .sidebar-nav a.router-link-active { background: #fce8e1; color: #e25822 !important; font-weight: 600; }
+
+/* Footer */
+.footer { padding: 1rem 2rem; text-align: center; background: #f0f0f0; border-top: 1px solid #ddd; font-size: 0.85rem; color: #666; }
+
+/* Landing */
+.landing { max-width: 640px; margin: 4rem auto; text-align: center; }
+.landing h1 { font-size: 2rem; color: #e25822; margin-bottom: 1rem; }
+.api-status { margin: 1rem 0 2rem; }
+.api-status strong { color: #2a9d3b; }
+.landing-actions { display: flex; gap: 1rem; justify-content: center; }
+.btn-primary { background: #e25822 !important; color: #fff !important; border: none !important; }
+.btn-secondary { background: #fff !important; color: #e25822 !important; border: 2px solid #e25822 !important; }
+.p-4 { padding: 1.5rem; }
+
+/* Auth Pages */
+.auth-page { max-width: 480px; margin: 3rem auto; background: #fff; border-radius: 10px; padding: 2.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.auth-page h1 { font-size: 1.8rem; color: #e25822; margin-bottom: 1.75rem; }
+.field { display: flex; flex-direction: column; margin-bottom: 1.25rem; }
+.field label { font-size: 0.9rem; font-weight: 600; color: #444; margin-bottom: 0.35rem; }
+.field input { padding: 0.6rem 0.85rem; border: 1px solid #ccc !important; border-radius: 6px; font-size: 1rem; outline: none; }
+.field input:focus { border-color: #e25822 !important; box-shadow: none !important; }
+.error-message { font-size: 0.82rem; color: #d9534f; margin-top: 0.3rem; }
+.api-error { background: #fce8e1; color: #c0392b; border-radius: 6px; padding: 0.65rem 1rem; font-size: 0.9rem; margin-bottom: 1rem; }
+.auth-page button[type="submit"] { width: 100%; padding: 0.75rem; background: #e25822; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; margin-top: 0.5rem; }
+.auth-page button[type="submit"]:hover:not(:disabled) { opacity: 0.88; }
+.auth-page button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+.auth-link { text-align: center; margin-top: 1.25rem; font-size: 0.9rem; color: #555; }
+.auth-link a { color: #e25822 !important; font-weight: 600; }
+
+/* Logout button */
+.btn-logout { background: none; border: none; color: #fff !important; padding: 0; cursor: pointer; font-size: 1rem; font-weight: 500; font-family: inherit; }
+.btn-logout:hover { opacity: 0.75; }

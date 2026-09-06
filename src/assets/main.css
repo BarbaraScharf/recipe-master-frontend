@@ -1,0 +1,25 @@
+/* Cor de marca do RecipeMaster */
+:root {
+  --brand-color: #e25822;
+  --brand-color-dark: #c44a1a;
+}
+
+.btn-brand {
+  background-color: var(--brand-color);
+  color: #fff;
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-brand:hover:not(:disabled) {
+  background-color: var(--brand-color-dark);
+}
+
+.btn-brand:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
