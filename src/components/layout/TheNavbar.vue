@@ -20,7 +20,8 @@ async function handleLogout() {
       <router-link to="/feed">Feed</router-link>
       <router-link to="/search">Buscar</router-link>
       <template v-if="authStore.isAuthenticated">
-        <router-link to="/profile/me">{{ authStore.user?.username }}</router-link>
+        <router-link to="/profile/me">Meu Perfil</router-link>
+        <span class="navbar-username">{{ authStore.user?.username }}</span>
         <button class="btn-logout" @click="handleLogout">Sair</button>
       </template>
       <template v-else>
