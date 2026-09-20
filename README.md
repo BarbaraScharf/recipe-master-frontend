@@ -1,6 +1,6 @@
 # RecipeMaster Frontend
 
-Front-end da aplicação **RecipeMaster**, uma plataforma para descobrir, compartilhar e favoritar receitas. Este projeto foi desenvolvido como atividade prática da disciplina de Programação Web, consumindo a API abaixo e seguindo boas práticas de organização em camadas (views, services, stores).
+Front-end da aplicação **RecipeMaster**, uma plataforma para descobrir, compartilhar e favoritar receitas. Desenvolvido como atividade prática da disciplina de Programação Web, consumindo a API REST abaixo e seguindo boas práticas de organização em camadas (views, services, stores, composables).
 
 Back-end correspondente: [recipe-master-api](https://github.com/BarbaraScharf/recipe-master-api)
 
@@ -8,22 +8,25 @@ Back-end correspondente: [recipe-master-api](https://github.com/BarbaraScharf/re
 
 - **Vue 3** (Composition API) — biblioteca de interface
 - **Vite** — build tool e servidor de desenvolvimento
-- **Vue Router** — roteamento e proteção de rotas autenticadas
+- **Vue Router 4** — roteamento e proteção de rotas autenticadas
 - **Pinia** — gerenciamento de estado (autenticação)
 - **Axios** — cliente HTTP com interceptors de requisição/resposta
-- **Bootstrap 5** — estilização base (via CDN)
+- **Bootstrap 5** + **Bootstrap Icons** — estilização e ícones (via CDN)
 
 ## Estrutura do projeto
 
     recipe-master-frontend/
     ├── src/
-    │   ├── assets/            # estilos e identidade visual (cor de marca)
+    │   ├── assets/            # estilos globais e cor de marca (#e25822)
     │   ├── components/
-    │   │   └── layout/        # Navbar, Sidebar, Footer
+    │   │   ├── base/          # BaseInput, BaseButton, FormCard
+    │   │   └── layout/        # TheNavbar, TheSidebar, TheFooter
+    │   ├── composables/       # useAuth()
     │   ├── router/            # rotas e guarda de autenticação
     │   ├── services/          # api.js (axios), authService, searchService, systemService
-    │   ├── stores/            # store de autenticação (Pinia)
-    │   ├── views/             # telas da aplicação (auth, admin, profile, lists...)
+    │   ├── stores/            # store de autenticação (Pinia + localStorage)
+    │   ├── utils/             # media.js (URLs de upload)
+    │   ├── views/             # telas: auth, profile, admin, lists...
     │   ├── App.vue
     │   └── main.js
     ├── index.html
@@ -46,11 +49,12 @@ cd recipe-master-frontend
 npm install
 
 # 3. Configure as variáveis de ambiente
-# Crie um arquivo .env na raiz do projeto com o seguinte conteúdo:
+# Crie um arquivo .env na raiz com o conteúdo abaixo:
 ```
 
 ```env
 VITE_API_URL=http://localhost:3000/api
+VITE_UPLOADS_URL=http://localhost:3000/uploads
 ```
 
 ```bash
@@ -60,17 +64,21 @@ npm run dev
 
 A aplicação sobe em `http://localhost:5173`.
 
-## Funcionalidades
+## Funcionalidades implementadas
 
-- Cadastro e login de usuários com autenticação via JWT
-- Sessão persistida em `localStorage`, com logout automático em caso de token inválido ou expirado
-- Guarda de rotas: telas que exigem login redirecionam para `/login` preservando a rota de destino (`?redirect=...`)
+- Cadastro e login com autenticação JWT
+- Sessão persistida em `localStorage`, logout automático em caso de token inválido
+- Guarda de rotas: telas protegidas redirecionam para `/login?redirect=...`
+- Edição de perfil: nome, bio e foto (upload multipart)
+- Componentes-base reutilizáveis: `BaseInput`, `BaseButton`, `FormCard`
+- Composable `useAuth()` centralizando acesso ao estado de autenticação
+- Sidebar condicional: links de funcionalidades protegidas visíveis apenas quando logado
 - Busca global integrada à API
-- Estrutura de rotas preparada para: feed, upload de receita, edição, "minhas receitas", perfis público/privado, listas, notificações e um painel administrativo
+- Estrutura de rotas preparada para: feed, upload de receita, edição, minhas receitas, perfis, listas, notificações e painel administrativo
 
 ## Autenticação
 
-O token JWT retornado pela API é armazenado no `localStorage` e anexado automaticamente pelo interceptor de requisição do Axios em toda chamada subsequente, no header `Authorization: Bearer <token>`. Qualquer resposta `401` da API limpa a sessão e redireciona o usuário para a tela de login.
+Token JWT armazenado no `localStorage` e anexado automaticamente pelo interceptor do Axios em toda requisição (`Authorization: Bearer <token>`). Qualquer `401` limpa a sessão e redireciona para o login.
 
 ## Licença
 
