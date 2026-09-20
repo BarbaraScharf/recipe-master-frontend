@@ -4,13 +4,19 @@
   --brand-color-dark: #c44a1a;
 }
 
+/* Fonte base maior — mais legível */
+html, body {
+  font-size: 16px;
+}
+
 .btn-brand {
   background-color: var(--brand-color);
   color: #fff;
   border: none;
-  padding: 0.65rem 1.5rem;
+  padding: 0.7rem 1.5rem;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
 }

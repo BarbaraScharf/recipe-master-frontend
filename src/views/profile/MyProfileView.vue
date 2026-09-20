@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { getMyProfile, updateProfile } from '../../services/authService'
 import { getProfilePictureUrl } from '../../utils/media'
+import BaseInput from '../../components/base/BaseInput.vue'
+import BaseButton from '../../components/base/BaseButton.vue'
 
 const user = ref(null)
 const isLoading = ref(true)
@@ -66,53 +68,99 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="profile-page">
-    <h1>Meu Perfil</h1>
+  <div class="container py-4">
+    <div v-if="isLoading" class="text-center py-5 text-muted">
+      <span class="spinner-border spinner-border-sm me-2" />Carregando...
+    </div>
 
-    <div v-if="isLoading" class="loading">Carregando...</div>
+    <div v-else-if="user" class="d-flex flex-column align-items-center gap-4">
 
-    <div v-else-if="user" class="profile-content">
-      <div class="profile-picture-section">
-        <img
-          :src="previewUrl || getProfilePictureUrl(user.profilePicture)"
-          :alt="user.username"
-          class="profile-picture"
-        />
-        <label class="btn-upload" for="profilePicture">Trocar foto</label>
-        <input
-          id="profilePicture"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          @change="handleFileChange"
-          style="display:none"
-        />
-      </div>
+      <!-- Card de perfil centralizado -->
+      <div class="profile-card card shadow-sm p-4 d-flex flex-column flex-md-row align-items-center gap-4">
 
-      <div class="profile-info">
-        <p><strong>@{{ user.username }}</strong></p>
-        <p>{{ user.email }}</p>
-        <p>{{ user.recipesCount }} receitas publicadas</p>
-        <p>{{ user.followersCount }} seguidores · {{ user.followingCount }} seguindo</p>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="profile-form">
-        <div class="field">
-          <label for="fullName">Nome completo</label>
-          <input id="fullName" type="text" v-model="form.fullName" />
+        <!-- Foto + info -->
+        <div class="text-center" style="min-width: 160px;">
+          <img
+            :src="previewUrl || getProfilePictureUrl(user.profilePicture)"
+            :alt="user.username"
+            class="profile-avatar rounded-circle mb-3"
+          />
+          <label class="btn btn-outline-secondary btn-sm d-block mx-auto" style="cursor:pointer; max-width:140px;">
+            <i class="bi bi-camera me-1" />Trocar foto
+            <input
+              id="profilePicture"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              class="d-none"
+              @change="handleFileChange"
+            />
+          </label>
+          <div class="mt-3">
+            <p class="fw-bold mb-1 fs-5">@{{ user.username }}</p>
+            <p class="text-muted small mb-1">{{ user.email }}</p>
+            <p class="small mb-1"><i class="bi bi-book me-1" />{{ user.recipesCount }} receitas publicadas</p>
+            <p class="small text-muted">{{ user.followersCount }} seguidores · {{ user.followingCount }} seguindo</p>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="bio">Bio</label>
-          <textarea id="bio" v-model="form.bio" rows="3" maxlength="255"></textarea>
+        <!-- Divider vertical -->
+        <div class="vr d-none d-md-block" style="height: auto; align-self: stretch;" />
+
+        <!-- Formulário -->
+        <div class="flex-grow-1 w-100">
+          <h5 class="fw-bold mb-3" style="color: var(--brand-color);">
+            <i class="bi bi-pencil-square me-2" />Editar Perfil
+          </h5>
+          <form @submit.prevent="handleSubmit" novalidate>
+            <BaseInput
+              id="fullName"
+              v-model="form.fullName"
+              label="Nome completo"
+              placeholder="Seu nome completo"
+            />
+            <BaseInput
+              id="bio"
+              v-model="form.bio"
+              label="Bio"
+              placeholder="Conte um pouco sobre você..."
+              :rows="3"
+              :maxlength="255"
+            />
+
+            <div v-if="apiErrorMessage" class="alert alert-danger py-2 mt-1 mb-2" role="alert">
+              <i class="bi bi-exclamation-circle me-2" />{{ apiErrorMessage }}
+            </div>
+            <div v-if="successMessage" class="alert alert-success py-2 mt-1 mb-2" role="alert">
+              <i class="bi bi-check-circle me-2" />{{ successMessage }}
+            </div>
+
+            <BaseButton
+              label="Salvar alterações"
+              loading-label="Salvando..."
+              :loading="isSaving"
+            />
+          </form>
         </div>
+      </div>
 
-        <p v-if="apiErrorMessage" class="api-error">{{ apiErrorMessage }}</p>
-        <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
-
-        <button type="submit" :disabled="isSaving">
-          {{ isSaving ? 'Salvando...' : 'Salvar alterações' }}
-        </button>
-      </form>
     </div>
   </div>
 </template>
+
+<style scoped>
+.profile-card {
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  padding: 2rem !important;
+}
+
+.profile-avatar {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border: 4px solid var(--brand-color);
+}
+</style>

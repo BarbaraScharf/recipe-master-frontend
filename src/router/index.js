@@ -29,7 +29,14 @@ const router = createRouter({
   routes,
 })
 
-// Guarda de rota — useAuthStore() chamado DENTRO do callback, não no topo do arquivo
+/**
+ * Guarda de rota — usa useAuthStore() chamado DENTRO do callback.
+ *
+ * Não usa o composable useAuth() aqui por uma razão técnica: o composable
+ * chama useRouter() internamente, o que exigiria ter o router já instanciado
+ * — criando uma dependência circular neste mesmo arquivo. Por isso, acessamos
+ * a store diretamente (o composable seria útil em componentes, não aqui).
+ */
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 

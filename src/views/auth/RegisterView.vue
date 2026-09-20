@@ -2,6 +2,9 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '../../services/authService'
+import FormCard from '../../components/base/FormCard.vue'
+import BaseInput from '../../components/base/BaseInput.vue'
+import BaseButton from '../../components/base/BaseButton.vue'
 
 const router = useRouter()
 
@@ -54,9 +57,7 @@ function validate() {
 async function handleSubmit() {
   apiErrorMessage.value = ''
 
-  if (!validate()) {
-    return
-  }
+  if (!validate()) return
 
   isSubmitting.value = true
 
@@ -80,49 +81,67 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="auth-page">
-    <h1>Criar Conta</h1>
+  <FormCard title="Criar Conta" icon="bi-person-plus">
+    <form @submit.prevent="handleSubmit" novalidate>
+      <BaseInput
+        id="fullName"
+        v-model="form.fullName"
+        label="Nome completo"
+        placeholder="Seu nome completo"
+        :error="errors.fullName"
+      />
 
-    <form @submit.prevent="handleSubmit">
-      <div class="field">
-        <label for="fullName">Nome completo</label>
-        <input id="fullName" type="text" v-model="form.fullName" />
-        <span v-if="errors.fullName" class="error-message">{{ errors.fullName }}</span>
+      <BaseInput
+        id="username"
+        v-model="form.username"
+        label="Usuário"
+        placeholder="nome de usuário (3–20 caracteres)"
+        :error="errors.username"
+      />
+
+      <BaseInput
+        id="email"
+        v-model="form.email"
+        label="E-mail"
+        type="email"
+        placeholder="seu@email.com"
+        :error="errors.email"
+      />
+
+      <BaseInput
+        id="password"
+        v-model="form.password"
+        label="Senha"
+        type="password"
+        placeholder="mínimo 6 caracteres"
+        :error="errors.password"
+      />
+
+      <BaseInput
+        id="confirmPassword"
+        v-model="form.confirmPassword"
+        label="Confirmar senha"
+        type="password"
+        placeholder="repita a senha"
+        :error="errors.confirmPassword"
+      />
+
+      <div v-if="apiErrorMessage" class="alert alert-danger py-2 mt-1 mb-2" role="alert">
+        <i class="bi bi-exclamation-circle me-2" />{{ apiErrorMessage }}
       </div>
 
-      <div class="field">
-        <label for="username">Usuário</label>
-        <input id="username" type="text" v-model="form.username" />
-        <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
-      </div>
-
-      <div class="field">
-        <label for="email">E-mail</label>
-        <input id="email" type="email" v-model="form.email" />
-        <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-      </div>
-
-      <div class="field">
-        <label for="password">Senha</label>
-        <input id="password" type="password" v-model="form.password" />
-        <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
-      </div>
-
-      <div class="field">
-        <label for="confirmPassword">Confirmar senha</label>
-        <input id="confirmPassword" type="password" v-model="form.confirmPassword" />
-        <span v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</span>
-      </div>
-
-      <p v-if="apiErrorMessage" class="api-error">{{ apiErrorMessage }}</p>
-
-      <button type="submit" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Criando conta...' : 'Criar Minha Conta' }}
-      </button>
+      <BaseButton
+        label="Criar Minha Conta"
+        loading-label="Criando conta..."
+        :loading="isSubmitting"
+      />
     </form>
 
-    <p class="auth-link">
-      Já tem conta? <router-link to="/login">Entrar</router-link>
+    <p class="text-center mt-3 mb-0 small">
+      Já tem conta?
+      <router-link to="/login" class="fw-semibold text-decoration-none" style="color: var(--brand-color)">
+        Entrar
+      </router-link>
     </p>
-  </div>
+  </FormCard>
 </template>

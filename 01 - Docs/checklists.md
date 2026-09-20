@@ -241,3 +241,37 @@
 - [x] Tela carrega dados reais do usuário ao montar
 - [x] Selecionar foto atualiza prévia sem chamada de rede
 - [x] Salvar funciona com e sem trocar foto
+
+---
+
+## Aula 06
+
+### Parte A — Backend (Checkpoint de Consistência)
+
+- [x] checkpoint-01.md criado e respondido
+- [x] Todos os endpoints já construídos continuam respondendo como esperado
+
+### Parte B — Frontend
+
+- [x] bootstrap-icons incluído via CDN no index.html
+- [x] BaseInput.vue criado em src/components/base/
+- [x] BaseButton.vue criado em src/components/base/
+- [x] FormCard.vue criado em src/components/base/
+- [x] RegisterView.vue refatorado para usar BaseInput / BaseButton / FormCard
+- [x] LoginView.vue refatorado para usar BaseInput / BaseButton / FormCard
+- [x] MyProfileView.vue refatorado para usar BaseInput / BaseButton / FormCard
+- [x] Tela de Registro visualmente consistente com Login/Perfil (cor de marca #e25822)
+- [x] composables/useAuth.js criado
+- [x] Guarda de rota atualizado (useAuthStore chamado dentro do callback — nota: useAuth() não usado no router por dependência circular)
+- [x] TheNavbar.vue atualizada para usar useAuth()
+- [x] TheSidebar.vue atualizada para usar useAuth(), com links condicionais ao estado de login
+- [x] Nenhum link novo aponta para funcionalidade ainda não construída
+
+### Checklist de testes
+
+- [x] Cadastro → redireciona ao Login com tela estilizada
+- [x] Login → redireciona à tela principal (/feed)
+- [x] Navbar → troca correta entre estado logado/deslogado
+- [x] Edição de Perfil → dados reais, edição, upload de foto continuam funcionando
+- [x] Guarda de rota → deslogado, rota protegida redireciona ao Login
+- [x] Console do DevTools sem erros novos

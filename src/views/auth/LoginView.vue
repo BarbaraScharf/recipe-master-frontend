@@ -2,6 +2,9 @@
 import { reactive, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
+import FormCard from '../../components/base/FormCard.vue'
+import BaseInput from '../../components/base/BaseInput.vue'
+import BaseButton from '../../components/base/BaseButton.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -56,31 +59,42 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="auth-page">
-    <h1>Entrar</h1>
+  <FormCard title="Entrar" icon="bi-box-arrow-in-right">
+    <form @submit.prevent="handleSubmit" novalidate>
+      <BaseInput
+        id="email"
+        v-model="form.email"
+        label="E-mail"
+        type="email"
+        placeholder="seu@email.com"
+        :error="errors.email"
+      />
 
-    <form @submit.prevent="handleSubmit">
-      <div class="field">
-        <label for="email">E-mail</label>
-        <input id="email" type="email" v-model="form.email" class="form-control" />
-        <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
+      <BaseInput
+        id="password"
+        v-model="form.password"
+        label="Senha"
+        type="password"
+        placeholder="sua senha"
+        :error="errors.password"
+      />
+
+      <div v-if="apiErrorMessage" class="alert alert-danger py-2 mt-1 mb-2" role="alert">
+        <i class="bi bi-exclamation-circle me-2" />{{ apiErrorMessage }}
       </div>
 
-      <div class="field">
-        <label for="password">Senha</label>
-        <input id="password" type="password" v-model="form.password" class="form-control" />
-        <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
-      </div>
-
-      <p v-if="apiErrorMessage" class="api-error">{{ apiErrorMessage }}</p>
-
-      <button type="submit" class="btn btn-brand w-100 mt-2" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Entrando...' : 'Entrar' }}
-      </button>
+      <BaseButton
+        label="Entrar"
+        loading-label="Entrando..."
+        :loading="isSubmitting"
+      />
     </form>
 
-    <p class="auth-link">
-      Não tem conta? <router-link to="/register">Criar conta</router-link>
+    <p class="text-center mt-3 mb-0 small">
+      Não tem conta?
+      <router-link to="/register" class="fw-semibold text-decoration-none" style="color: var(--brand-color)">
+        Criar conta
+      </router-link>
     </p>
-  </div>
+  </FormCard>
 </template>
