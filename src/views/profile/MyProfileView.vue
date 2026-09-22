@@ -79,13 +79,13 @@ async function handleSubmit() {
       <div class="profile-card card shadow-sm p-4 d-flex flex-column flex-md-row align-items-center gap-4">
 
         <!-- Foto + info -->
-        <div class="text-center" style="min-width: 160px;">
+        <div class="text-center" style="min-width: 200px;">
           <img
             :src="previewUrl || getProfilePictureUrl(user.profilePicture)"
             :alt="user.username"
             class="profile-avatar rounded-circle mb-3"
           />
-          <label class="btn btn-outline-secondary btn-sm d-block mx-auto" style="cursor:pointer; max-width:140px;">
+          <label class="btn btn-outline-secondary d-block mx-auto" style="cursor:pointer; max-width:180px; font-size:1.1rem;">
             <i class="bi bi-camera me-1" />Trocar foto
             <input
               id="profilePicture"
@@ -96,10 +96,10 @@ async function handleSubmit() {
             />
           </label>
           <div class="mt-3">
-            <p class="fw-bold mb-1 fs-5">@{{ user.username }}</p>
-            <p class="text-muted small mb-1">{{ user.email }}</p>
-            <p class="small mb-1"><i class="bi bi-book me-1" />{{ user.recipesCount }} receitas publicadas</p>
-            <p class="small text-muted">{{ user.followersCount }} seguidores · {{ user.followingCount }} seguindo</p>
+            <p class="fw-bold mb-1" style="font-size:1.4rem;">@{{ user.username }}</p>
+            <p class="text-muted mb-1" style="font-size:1.1rem;">{{ user.email }}</p>
+            <p class="mb-1" style="font-size:1.1rem;"><i class="bi bi-book me-1" />{{ user.recipesCount }} receitas publicadas</p>
+            <p class="text-muted" style="font-size:1.1rem;">{{ user.followersCount }} seguidores · {{ user.followingCount }} seguindo</p>
           </div>
         </div>
 
@@ -150,16 +150,17 @@ async function handleSubmit() {
 <style scoped>
 .profile-card {
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
   border-radius: 14px;
   border: none;
   box-shadow: 0 8px 32px rgba(0,0,0,0.10);
   padding: 2rem !important;
+  font-size: 1.1rem;
 }
 
 .profile-avatar {
-  width: 180px;
-  height: 180px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border: 4px solid var(--brand-color);
 }

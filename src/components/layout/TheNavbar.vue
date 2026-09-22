@@ -20,8 +20,8 @@ const { authStore, logout } = useAuth()
 </script>
 
 <template>
-  <header class="navbar navbar-expand-md navbar-dark px-4 py-2" style="background-color: var(--brand-color); font-size: 1.2rem;">
-    <router-link class="navbar-brand fw-bold" to="/">
+  <header class="navbar navbar-expand-md navbar-dark px-4 py-2" style="background-color: var(--brand-color); font-size: 1.35rem;">
+    <router-link class="navbar-brand fw-bold fs-4" to="/">
       <i class="bi bi-egg-fried me-2" />RecipeMaster
     </router-link>
 

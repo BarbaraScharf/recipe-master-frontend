@@ -275,3 +275,41 @@
 - [x] Edição de Perfil → dados reais, edição, upload de foto continuam funcionando
 - [x] Guarda de rota → deslogado, rota protegida redireciona ao Login
 - [x] Console do DevTools sem erros novos
+
+---
+
+## Aula 07
+
+### Parte A — Backend
+
+- [x] Pasta public/uploads/recipes/ criada
+- [x] TITLE_MAX, DESCRIPTION_MAX, INGREDIENTS_MAX, INSTRUCTIONS_MAX adicionados a constants.js
+- [x] modules/recipe/recipeModel.js criado com todos os campos
+- [x] config/associations.js criado (User hasMany Recipe / Recipe belongsTo User)
+- [x] middlewares/recipeMulter.js criado (Grupo B — multer.single('image'))
+- [x] modules/recipe/recipeValidator.js criado
+- [x] modules/recipe/recipeService.js criado (createRecipe + incrementa recipesCount)
+- [x] modules/recipe/recipeController.js criado
+- [x] modules/recipe/recipeRoutes.js criado (auth → multer → validator → controller)
+- [x] app.js atualizado com recipeRoutes e associations carregado antes do sync
+- [x] Tabela recipes criada no banco com FK para users
+- [x] Upload completo funciona e recipesCount do usuário sobe
+- [x] Casos de erro recusados com status correto
+
+### Parte B — Frontend
+
+- [x] src/services/recipeService.js criado com onUploadProgress
+- [x] UploadRecipeView.vue construído com formulário, preview e barra de progresso
+- [x] Link "Nova Receita" visível na Sidebar apenas quando logado
+- [x] Barra de progresso funcionando
+- [x] Prévia de imagem funcionando (sem chamada de rede)
+- [x] 01-Docs/atividade07/ficha-preparacao.md criado
+
+### Checklist de testes
+
+- [x] Login → clique em Nova Receita → URL muda sem recarregar
+- [x] Envio vazio → erros de campo obrigatório aparecem
+- [x] Imagem selecionada → prévia aparece sem chamada de rede
+- [x] Envio → barra de progresso avança → mensagem de sucesso
+- [x] Network mostra Content-Type: multipart/form-data
+- [x] Banco confirma registro criado e recipesCount subiu

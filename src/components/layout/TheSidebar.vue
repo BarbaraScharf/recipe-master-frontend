@@ -3,21 +3,18 @@
  * TheSidebar — navegação lateral.
  * Usa useAuth() (Aula 06) para mostrar links condicionalmente.
  *
- * Regra aplicada (ADR-013 do curso de referência):
- *   Só aparecem links para funcionalidades que EXISTEM hoje (Aulas 01–06).
- *   Links que dependem de módulos futuros serão adicionados quando esses
- *   módulos forem construídos:
- *     - Nova Receita / Minhas Receitas  → módulo recipes (Aulas futuras)
- *     - Minhas Listas                  → módulo lists (Aula futura)
- *     - Notificações                   → módulo notifications (Aula futura)
- *     - Admin                          → painel admin (Aula futura)
+ * Links públicos (sempre visíveis):
+ *   - Início, Feed, Buscar Receitas
  *
- * Funcionalidades disponíveis hoje:
- *   - Landing (/)          — pública
- *   - Feed (/feed)         — pública (placeholder)
- *   - Buscar (/search)     — pública (placeholder)
- *   - Meu Perfil           — logado (funcional desde Aula 05)
- *   - Perfil Público       — pública (via navbar/links diretos)
+ * Links visíveis apenas quando logado (Aula 06+):
+ *   - Nova Receita    → módulo recipes (construído na Aula 07)
+ *   - Minhas Receitas → módulo recipes (construído na Aula 07)
+ *   - Meu Perfil      → funcional desde Aula 05
+ *
+ * Links pendentes para aulas futuras:
+ *   - Minhas Listas   → módulo lists (Aula futura)
+ *   - Notificações    → módulo notifications (Aula futura)
+ *   - Admin           → painel admin (Aula futura)
  */
 import { useAuth } from '../../composables/useAuth'
 

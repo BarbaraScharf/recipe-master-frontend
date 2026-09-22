@@ -33,10 +33,11 @@ const props = defineProps({
 <style scoped>
 .form-card {
   width: 100%;
-  max-width: 580px;
+  max-width: 700px;
   border-radius: 14px;
   border: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13), 0 2px 8px rgba(226, 88, 34, 0.08);
+  font-size: 1.15rem;
 }
 
 .form-card-header {

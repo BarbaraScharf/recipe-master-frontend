@@ -1,5 +1,5 @@
 <template>
   <footer class="footer">
-    <small>RecipeMaster © 2026 — Projeto didático</small>
+    <span style="font-size: 1rem;">RecipeMaster © 2026 — Projeto didático</span>
   </footer>
 </template>
