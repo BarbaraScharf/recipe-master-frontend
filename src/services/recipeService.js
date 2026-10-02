@@ -2,13 +2,9 @@
  * recipeService.js
  *
  * Service da entidade Recipe.
- * A função createRecipe recebe onUploadProgress como parâmetro — isso permite
- * que o componente passe um callback que atualiza a barra de progresso na tela
- * enquanto o Axios envia os dados para a API.
- *
- * O que onUploadProgress recebe:
- *   Um ProgressEvent com { loaded, total } — bytes já enviados e total de bytes.
- *   Transformamos isso em porcentagem: Math.round((loaded / total) * 100).
+ * createRecipe: recebe onUploadProgress para barra de progresso (Aula 07).
+ * getRecipeById: busca detalhe com autor populado + isOwner.
+ * getFeed foi movido para userService.js (espelha userRoutes no backend).
  */
 import api from './api'
 
@@ -22,4 +18,8 @@ export function createRecipe(formData, onUploadProgress) {
       }
     }
   })
+}
+
+export function getRecipeById(id) {
+  return api.get(`/recipes/${id}`)
 }

@@ -25,7 +25,7 @@ const props = defineProps({
 <template>
   <button
     :type="type"
-    class="btn btn-lg w-100 mt-2"
+    class="btn w-100 mt-2"
     :class="variant === 'brand' ? 'btn-brand' : `btn-${variant}`"
     :disabled="loading"
   >

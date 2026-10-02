@@ -41,18 +41,15 @@ const { authStore } = useAuth()
         <router-link class="sidebar-link" to="/recipes/upload">
           <i class="bi bi-plus-circle me-2" />Nova Receita
         </router-link>
-        <router-link class="sidebar-link" to="/my-recipes">
-          <i class="bi bi-book me-2" />Minhas Receitas
-        </router-link>
-        <router-link class="sidebar-link" to="/my-lists">
-          <i class="bi bi-heart me-2" />Minhas Listas
-        </router-link>
         <router-link class="sidebar-link" to="/profile/me">
           <i class="bi bi-person-circle me-2" />Meu Perfil
         </router-link>
-        <router-link class="sidebar-link" to="/notifications">
-          <i class="bi bi-bell me-2" />Notificações
-        </router-link>
+        <!--
+          Links adicionados quando os módulos estiverem prontos:
+          Minhas Receitas  → Aula 09
+          Minhas Listas    → Aula 13
+          Notificações     → Aula 14
+        -->
       </template>
     </nav>
   </aside>
@@ -60,7 +57,7 @@ const { authStore } = useAuth()
 
 <style scoped>
 .sidebar {
-  width: 220px;
+  width: clamp(180px, 15vw, 240px);
   min-height: calc(100vh - 56px);
   background-color: #f8f9fa;
   border-right: 1px solid #dee2e6;
@@ -70,11 +67,11 @@ const { authStore } = useAuth()
 .sidebar-link {
   display: flex;
   align-items: center;
-  padding: 0.6rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 8px;
   color: #495057;
   text-decoration: none;
-  font-size: 1.25rem;
+  font-size: 1rem;
   transition: background-color 0.15s, color 0.15s;
 }
 

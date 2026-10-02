@@ -4,7 +4,7 @@
   --brand-color-dark: #c44a1a;
 }
 
-/* Fonte base maior — mais legível */
+/* Fonte base — padrão da web (iFood, TudoGostoso, Airbnb) */
 html, body {
   font-size: 16px;
 }

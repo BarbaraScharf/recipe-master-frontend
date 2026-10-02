@@ -203,7 +203,7 @@
 - [x] src/assets/main.css criado com cor de marca #e25822
 - [x] Tela de Login funcional chamando authStore.login()
 - [x] Guarda de rota bloqueando acesso a rotas com requiresAuth: true
-- [x] useAuthStore() chamado dentro do callback do guard, não no topo
+- [x] Guarda de rota atualizado para usar useAuth() — composable sem useRouter(), router.push fica na Navbar
 - [x] Navbar mostra links diferentes conforme estado de login
 - [x] Logout limpa sessão e redireciona ao Login
 - [x] Login funcional → redireciona ao feed
@@ -259,10 +259,10 @@
 - [x] FormCard.vue criado em src/components/base/
 - [x] RegisterView.vue refatorado para usar BaseInput / BaseButton / FormCard
 - [x] LoginView.vue refatorado para usar BaseInput / BaseButton / FormCard
-- [x] MyProfileView.vue refatorado para usar BaseInput / BaseButton / FormCard
+- [x] MyProfileView.vue refatorado para usar BaseInput e BaseButton (FormCard não aplicado — layout de perfil é diferente dos formulários de auth)
 - [x] Tela de Registro visualmente consistente com Login/Perfil (cor de marca #e25822)
 - [x] composables/useAuth.js criado
-- [x] Guarda de rota atualizado (useAuthStore chamado dentro do callback — nota: useAuth() não usado no router por dependência circular)
+- [x] Guarda de rota atualizado para usar useAuth() — composable sem useRouter(), router.push fica na Navbar
 - [x] TheNavbar.vue atualizada para usar useAuth()
 - [x] TheSidebar.vue atualizada para usar useAuth(), com links condicionais ao estado de login
 - [x] Nenhum link novo aponta para funcionalidade ainda não construída
@@ -313,3 +313,47 @@
 - [x] Envio → barra de progresso avança → mensagem de sucesso
 - [x] Network mostra Content-Type: multipart/form-data
 - [x] Banco confirma registro criado e recipesCount subiu
+
+---
+
+## Aula 08
+
+### Parte A — Backend
+
+- [x] middlewares/optionalAuth.js criado
+## Aula 08
+
+### Parte A — Backend
+
+- [x] middlewares/optionalAuth.js criado
+- [x] viewsCount adicionado ao recipeModel
+- [x] getRecipeById adicionado ao recipeService.js (include do autor sem senha, incrementa viewsCount, isOwner)
+- [x] getFeed adicionado ao userService.js (paginado, offset = (page-1)*limit) — feed é visão do usuário logado
+- [x] getFeed adicionado ao userController.js
+- [x] GET /api/recipes/:id criada em recipeRoutes.js (optionalAuth)
+- [x] GET /api/feed criada em userRoutes.js (isAuthenticated, paginada)
+- [x] Streaming: não se aplica (Grupo B)
+- [x] Detalhe sem token → 200, isOwner: false, viewsCount: 1
+- [x] Detalhe com token do dono → 200, isOwner: true, viewsCount: 2
+- [x] Detalhe inexistente → 404
+- [x] Feed sem token → 401
+- [x] Feed page=1&limit=1 → 1 item
+- [x] Feed page=2&limit=1 → próximo item
+
+### Parte B — Frontend
+
+- [x] getRecipeImageUrl adicionado a utils/media.js
+- [x] getRecipeById adicionado a recipeService.js
+- [x] getFeed criado em userService.js (frontend espelha decisão do backend)
+- [x] RecipeCard.vue criado em components/recipe/
+- [x] FeedView.vue com grade e "Carregar mais" (LIMIT=3)
+- [x] RecipeDetailView.vue com imagem real (380px, maior que miniatura do card de 200px) e isOwner guardado no estado
+- [x] MyProfileView.vue usa BaseInput e BaseButton (FormCard não aplicado — layout de perfil é diferente dos formulários de auth)
+
+### Checklist de testes
+
+- [x] Login → Feed → itens reais aparecem
+- [x] Clique num card → detalhe sem recarregar
+- [x] Grupo B: imagem carrega em resolução real
+- [x] F5 no detalhe → viewsCount sobe (confirmado)
+- [x] ID inexistente → mensagem de erro sem quebrar a tela

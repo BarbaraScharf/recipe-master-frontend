@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { useAuth } from '../composables/useAuth'
 import api from '../services/api'
 
 const routes = [
@@ -30,15 +30,12 @@ const router = createRouter({
 })
 
 /**
- * Guarda de rota — usa useAuthStore() chamado DENTRO do callback.
- *
- * Não usa o composable useAuth() aqui por uma razão técnica: o composable
- * chama useRouter() internamente, o que exigiria ter o router já instanciado
- * — criando uma dependência circular neste mesmo arquivo. Por isso, acessamos
- * a store diretamente (o composable seria útil em componentes, não aqui).
+ * Guarda de rota — usa useAuth() (Aula 06).
+ * useAuth() não chama useRouter() internamente, então pode ser
+ * chamado aqui sem dependência circular.
  */
 router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
+  const { authStore } = useAuth()
 
   if (to.meta.requiresAuth) {
     if (!authStore.isAuthenticated) {

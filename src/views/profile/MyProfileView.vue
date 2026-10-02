@@ -108,38 +108,42 @@ async function handleSubmit() {
 
         <!-- Formulário -->
         <div class="flex-grow-1 w-100">
-          <h5 class="fw-bold mb-3" style="color: var(--brand-color);">
-            <i class="bi bi-pencil-square me-2" />Editar Perfil
-          </h5>
-          <form @submit.prevent="handleSubmit" novalidate>
-            <BaseInput
-              id="fullName"
-              v-model="form.fullName"
-              label="Nome completo"
-              placeholder="Seu nome completo"
-            />
-            <BaseInput
-              id="bio"
-              v-model="form.bio"
-              label="Bio"
-              placeholder="Conte um pouco sobre você..."
-              :rows="3"
-              :maxlength="255"
-            />
-
-            <div v-if="apiErrorMessage" class="alert alert-danger py-2 mt-1 mb-2" role="alert">
-              <i class="bi bi-exclamation-circle me-2" />{{ apiErrorMessage }}
+          <div class="card border-0 shadow-sm">
+            <div class="card-header fw-bold" style="background-color: var(--brand-color); color: #fff; border-radius: 10px 10px 0 0; padding: 0.75rem 1.25rem;">
+              <i class="bi bi-pencil-square me-2" />Editar Perfil
             </div>
-            <div v-if="successMessage" class="alert alert-success py-2 mt-1 mb-2" role="alert">
-              <i class="bi bi-check-circle me-2" />{{ successMessage }}
-            </div>
+            <div class="card-body p-4">
+              <form @submit.prevent="handleSubmit" novalidate>
+                <BaseInput
+                  id="fullName"
+                  v-model="form.fullName"
+                  label="Nome completo"
+                  placeholder="Seu nome completo"
+                />
+                <BaseInput
+                  id="bio"
+                  v-model="form.bio"
+                  label="Bio"
+                  placeholder="Conte um pouco sobre você..."
+                  :rows="3"
+                  :maxlength="255"
+                />
 
-            <BaseButton
-              label="Salvar alterações"
-              loading-label="Salvando..."
-              :loading="isSaving"
-            />
-          </form>
+                <div v-if="apiErrorMessage" class="alert alert-danger py-2 mt-1 mb-2" role="alert">
+                  <i class="bi bi-exclamation-circle me-2" />{{ apiErrorMessage }}
+                </div>
+                <div v-if="successMessage" class="alert alert-success py-2 mt-1 mb-2" role="alert">
+                  <i class="bi bi-check-circle me-2" />{{ successMessage }}
+                </div>
+
+                <BaseButton
+                  label="Salvar alterações"
+                  loading-label="Salvando..."
+                  :loading="isSaving"
+                />
+              </form>
+            </div>
+          </div>
         </div>
       </div>
 

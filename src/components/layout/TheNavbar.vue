@@ -15,12 +15,19 @@
  *   - Admin         → painel administrativo (Aula futura)
  */
 import { useAuth } from '../../composables/useAuth'
+import { useRouter } from 'vue-router'
 
-const { authStore, logout } = useAuth()
+const { authStore, logout: logoutStore } = useAuth()
+const router = useRouter()
+
+async function handleLogout() {
+  await logoutStore()
+  router.push({ name: 'login' })
+}
 </script>
 
 <template>
-  <header class="navbar navbar-expand-md navbar-dark px-4 py-2" style="background-color: var(--brand-color); font-size: 1.35rem;">
+  <header class="navbar navbar-expand-md navbar-dark px-4 py-2" style="background-color: var(--brand-color);">
     <router-link class="navbar-brand fw-bold fs-4" to="/">
       <i class="bi bi-egg-fried me-2" />RecipeMaster
     </router-link>
@@ -38,7 +45,7 @@ const { authStore, logout } = useAuth()
           <i class="bi bi-person-circle me-1" />Meu Perfil
         </router-link>
         <span class="text-white small opacity-75">@{{ authStore.user?.username }}</span>
-        <button class="btn btn-outline-light" @click="logout">
+        <button class="btn btn-outline-light" @click="handleLogout">
           <i class="bi bi-box-arrow-right me-1" />Sair
         </button>
       </template>

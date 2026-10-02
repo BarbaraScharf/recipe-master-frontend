@@ -32,14 +32,14 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="mb-4">
-    <label :for="id" class="form-label fw-semibold fs-6">{{ label }}</label>
+  <div class="mb-3">
+    <label :for="id" class="form-label fw-semibold">{{ label }}</label>
 
     <textarea
       v-if="rows > 0"
       :id="id"
       v-model="model"
-      class="form-control form-control-lg"
+      class="form-control"
       :class="{ 'is-invalid': error }"
       :rows="rows"
       :placeholder="placeholder"
@@ -51,7 +51,7 @@ const props = defineProps({
       v-else
       :id="id"
       v-model="model"
-      class="form-control form-control-lg"
+      class="form-control"
       :class="{ 'is-invalid': error }"
       :type="type"
       :placeholder="placeholder"
