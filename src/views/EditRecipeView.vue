@@ -121,11 +121,12 @@ async function handleSubmit() {
 
     <!-- Erro de carregamento (404 ou 403) -->
     <div v-else-if="loadError" class="text-center py-5">
-      <i class="bi bi-exclamation-circle text-danger" style="font-size:3rem;" />
-      <p class="mt-3 text-danger fw-semibold">{{ loadError }}</p>
-      <button class="btn btn-brand mt-2" @click="router.back()">
-        <i class="bi bi-arrow-left me-2" />Voltar
-      </button>
+      <i class="bi bi-exclamation-circle" style="font-size:4rem; color: var(--brand-color);" />
+      <h4 class="mt-3 fw-bold" style="color: var(--brand-color);">{{ loadError }}</h4>
+      <p class="text-muted">A receita que você tentou editar não existe ou não pertence a você.</p>
+      <router-link to="/my-recipes" class="btn btn-brand mt-2">
+        <i class="bi bi-journal-text me-2" />Minhas Receitas
+      </router-link>
     </div>
 
     <!-- Formulário -->

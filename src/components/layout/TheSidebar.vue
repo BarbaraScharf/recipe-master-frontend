@@ -47,6 +47,9 @@ const { authStore } = useAuth()
         <router-link class="sidebar-link" to="/my-recipes">
           <i class="bi bi-journal-text me-2" />Minhas Receitas
         </router-link>
+        <router-link class="sidebar-link" to="/liked-recipes">
+          <i class="bi bi-heart me-2" />Receitas Curtidas
+        </router-link>
         <!--
           Links adicionados quando os módulos estiverem prontos:
           Minhas Listas    → Aula 13

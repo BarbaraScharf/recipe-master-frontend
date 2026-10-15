@@ -11,6 +11,7 @@ const routes = [
   { path: '/recipes/:id',    name: 'recipe-detail',  component: () => import('../views/RecipeDetailView.vue') },
   { path: '/recipes/:id/edit', name: 'recipe-edit',  component: () => import('../views/EditRecipeView.vue'),       meta: { requiresAuth: true } },
   { path: '/my-recipes',     name: 'my-recipes',     component: () => import('../views/MyRecipesView.vue'),        meta: { requiresAuth: true } },
+  { path: '/liked-recipes',  name: 'liked-recipes',  component: () => import('../views/LikedRecipesView.vue'),      meta: { requiresAuth: true } },
   { path: '/profile/me',     name: 'my-profile',     component: () => import('../views/profile/MyProfileView.vue'), meta: { requiresAuth: true } },
   { path: '/profile/:username', name: 'public-profile', component: () => import('../views/profile/PublicProfileView.vue') },
   { path: '/my-lists',       name: 'my-lists',       component: () => import('../views/lists/MyListsView.vue'),    meta: { requiresAuth: true } },

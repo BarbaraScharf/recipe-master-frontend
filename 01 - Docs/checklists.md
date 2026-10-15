@@ -398,3 +398,35 @@
 - [x] PublicProfileView.vue criada com isOwner, botão Editar Perfil / Seguir / nenhum conforme estado
 - [x] RecipeDetailView.vue atualizada — autor clicável, botão Editar visível só para o dono
 - [x] UploadRecipeView.vue atualizado — redireciona para /my-recipes após sucesso, link na mensagem
+
+---
+
+## Aula 10
+
+### Parte A — Backend
+
+- [x] COMMENT_MAX adicionado a config/constants.js
+- [x] commentsCount adicionado ao recipeModel.js
+- [x] Model Like criado com índice único composto (userId + recipeId)
+- [x] Model Comment criado com índices em recipe_id e user_id
+- [x] Associações nos dois sentidos (User↔Like, Recipe↔Like, User↔Comment, Recipe↔Comment) em associations.js
+- [x] Módulo like completo: toggleLike, getLikeStatus, getLikedRecipes
+- [x] Módulo comment completo: addComment, getComments com validador (trim antes de notEmpty)
+- [x] Todas as escritas duplas (linha + contador) dentro de transação
+- [x] Detalhe devolvendo isLiked
+- [x] Exclusão em transação com limpeza de likes e comentários
+- [x] trim() movido para o início nos campos obrigatórios dos validators
+
+### Parte B — Frontend
+
+- [x] likeService.js criado (toggleLike, getLikeStatus, getLikedRecipes)
+- [x] commentService.js criado (addComment, getComments)
+- [x] utils/format.js criado (formatCount, formatDate, timeAgo)
+- [x] LikeButton.vue com atualização otimista e rollback
+- [x] Visitante é redirecionado ao login ao clicar em curtir
+- [x] CommentSection.vue com lista, formulário validado, novo comentário no topo
+- [x] Texto do comentário com {{ }} nunca v-html
+- [x] RecipeDetailView atualizado com LikeButton e CommentSection
+- [x] Contadores (likesCount, commentsCount) adicionados ao RecipeCard
+- [x] LikedRecipesView criado com rota /liked-recipes
+- [x] Link "Receitas Curtidas" adicionado à Sidebar
