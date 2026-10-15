@@ -81,7 +81,7 @@ async function handleSubmit() {
         <!-- Foto + info -->
         <div class="text-center" style="min-width: 200px;">
           <img
-            :src="previewUrl || getProfilePictureUrl(user.profilePicture)"
+            :src="previewUrl || getProfilePictureUrl(user.profilePicture, user.fullName || user.username)"
             :alt="user.username"
             class="profile-avatar rounded-circle mb-3"
           />
@@ -97,7 +97,7 @@ async function handleSubmit() {
           </label>
           <div class="mt-3">
             <p class="fw-bold mb-1" style="font-size:1.4rem;">@{{ user.username }}</p>
-            <p class="text-muted mb-1" style="font-size:1.1rem;">{{ user.email }}</p>
+            <p class="text-muted mb-1" style="font-size:1.1rem; word-break: break-all;">{{ user.email }}</p>
             <p class="mb-1" style="font-size:1.1rem;"><i class="bi bi-book me-1" />{{ user.recipesCount }} receitas publicadas</p>
             <p class="text-muted" style="font-size:1.1rem;">{{ user.followersCount }} seguidores · {{ user.followingCount }} seguindo</p>
           </div>

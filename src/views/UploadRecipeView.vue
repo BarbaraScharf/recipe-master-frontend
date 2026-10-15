@@ -80,7 +80,7 @@ async function handleSubmit() {
       uploadProgress.value = percent
     })
     successMsg.value = response.message || 'Receita publicada com sucesso!'
-    setTimeout(() => router.push({ name: 'feed' }), 1500)
+    setTimeout(() => router.push({ name: 'my-recipes' }), 1500)
   } catch (err) {
     apiError.value = err.message
   } finally {
@@ -215,6 +215,7 @@ async function handleSubmit() {
         </div>
         <div v-if="successMsg" class="alert alert-success py-2 mb-3" role="alert">
           <i class="bi bi-check-circle me-2" />{{ successMsg }}
+          — <router-link to="/my-recipes" class="alert-link">Ver minhas receitas</router-link>
         </div>
 
         <BaseButton

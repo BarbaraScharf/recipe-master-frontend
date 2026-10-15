@@ -1,31 +1,49 @@
 <script setup>
 /**
- * RecipeCard — card reutilizável para a grade do Feed.
- * Ao clicar navega para /recipes/:id sem recarregar a página (Vue Router).
+ * RecipeCard — card reutilizável (Aula 09 refatoração).
+ *
+ * Mudanças em relação à Aula 08:
+ *   - Sem <a> gigante cobrindo o card inteiro: clicar no card navega ao detalhe,
+ *     mas o autor tem seu próprio router-link clicável de forma independente.
+ *   - Slot "actions" — permite que MyRecipesView injete botões Editar/Excluir
+ *     sem que o Feed padrão precise saber que eles existem.
+ *   - O modal de confirmação de exclusão NÃO fica aqui — fica na tela pai
+ *     (MyRecipesView) para ficar centralizado na viewport.
  *
  * Props:
- *   recipe — objeto com id, title, category, image, prepTime, servings, author
+ *   recipe      — objeto com id, title, category, image, prepTime, servings, author
+ *   showAuthor  — Boolean (default: true) — permite ocultar o autor quando
+ *                 já estamos no perfil do usuário (evita informação redundante)
+ *
+ * Emits: nenhum — a navegação é feita internamente via router.push no clique do card.
  */
 import { useRouter } from 'vue-router'
-import { getRecipeImageUrl } from '../../utils/media'
+import { getRecipeImageUrl, getProfilePictureUrl } from '../../utils/media'
 
 defineOptions({ name: 'RecipeCard' })
 
 const props = defineProps({
-  recipe: { type: Object, required: true }
+  recipe:     { type: Object,  required: true },
+  showAuthor: { type: Boolean, default: true  }
 })
 
 const router = useRouter()
 
-function goToDetail() {
+function goToDetail(event) {
+  // Não navega ao detalhe se o clique foi num elemento interativo filho
+  if (event.target.closest('a, button')) return
   router.push({ name: 'recipe-detail', params: { id: props.recipe.id } })
 }
 </script>
 
 <template>
-  <div class="recipe-card" @click="goToDetail" role="button" tabindex="0"
-    @keydown.enter="goToDetail">
-
+  <div
+    class="recipe-card"
+    @click="goToDetail"
+    role="button"
+    tabindex="0"
+    @keydown.enter="goToDetail"
+  >
     <!-- Imagem -->
     <div class="recipe-card-img-wrapper">
       <img
@@ -53,8 +71,24 @@ function goToDetail() {
         </span>
       </div>
 
-      <div class="recipe-card-author" v-if="recipe.author">
-        <i class="bi bi-person-circle me-1" />{{ recipe.author.username }}
+      <!-- Autor clicável de forma independente (não dispara goToDetail) -->
+      <router-link
+        v-if="showAuthor && recipe.author"
+        :to="{ name: 'public-profile', params: { username: recipe.author.username } }"
+        class="recipe-card-author-link"
+        @click.stop
+      >
+        <img
+          :src="getProfilePictureUrl(recipe.author.profilePicture, recipe.author.fullName || recipe.author.username)"
+          :alt="recipe.author.username"
+          class="recipe-card-avatar"
+        />
+        <span>{{ recipe.author.fullName || recipe.author.username }}</span>
+      </router-link>
+
+      <!-- Slot de ações (Editar / Excluir) — injetado por MyRecipesView -->
+      <div v-if="$slots.actions" class="recipe-card-actions" @click.stop>
+        <slot name="actions" />
       </div>
     </div>
   </div>
@@ -65,7 +99,7 @@ function goToDetail() {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.09);
   cursor: pointer;
   transition: transform 0.18s, box-shadow 0.18s;
   display: flex;
@@ -74,7 +108,7 @@ function goToDetail() {
 
 .recipe-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 24px rgba(226,88,34,0.18);
+  box-shadow: 0 6px 24px rgba(226, 88, 34, 0.18);
 }
 
 .recipe-card-img-wrapper {
@@ -125,9 +159,31 @@ function goToDetail() {
   color: #777;
 }
 
-.recipe-card-author {
+.recipe-card-author-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-size: 0.85rem;
   color: #999;
+  text-decoration: none;
   margin-top: auto;
+}
+
+.recipe-card-author-link:hover {
+  color: var(--brand-color);
+}
+
+.recipe-card-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.recipe-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  width: 100%;
 }
 </style>

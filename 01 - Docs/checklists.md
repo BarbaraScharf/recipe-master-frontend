@@ -357,3 +357,44 @@
 - [x] Grupo B: imagem carrega em resolução real
 - [x] F5 no detalhe → viewsCount sobe (confirmado)
 - [x] ID inexistente → mensagem de erro sem quebrar a tela
+
+---
+
+## Aula 09
+
+### Parte A — Backend
+
+- [x] reload() verificado no detalhe — duas chamadas consecutivas devolvem contagens consecutivas
+- [x] Verificação 404 antes de 403 nas funções getRecipeForEdit, updateRecipe e deleteRecipe
+- [x] Ordem banco → disco respeitada em updateRecipe e deleteRecipe
+- [x] recipesCount decrementado na exclusão (User.decrement)
+- [x] getMyRecipes adicionado ao recipeService.js
+- [x] getRecipeForEdit adicionado ao recipeService.js
+- [x] updateRecipe adicionado ao recipeService.js
+- [x] deleteRecipe adicionado ao recipeService.js
+- [x] Quatro handlers no recipeController.js (getMyRecipes, getRecipeForEdit, updateRecipe, deleteRecipe)
+- [x] updateRecipeValidator criado no recipeValidator.js
+- [x] GET /my-recipes adicionado ao recipeRoutes.js (isAuthenticated)
+- [x] GET /recipes/:id/edit adicionado ao recipeRoutes.js (isAuthenticated) — antes de GET /recipes/:id
+- [x] PUT /recipes/:id adicionado ao recipeRoutes.js (auth → multer → validator → controller)
+- [x] DELETE /recipes/:id adicionado ao recipeRoutes.js (isAuthenticated)
+- [x] getPublicProfile atualizado no userService.js com include de receitas e isOwner
+- [x] getPublicProfile no userController.js passa requestingUserId
+- [x] /profile/:username em userRoutes.js usa optionalAuth
+- [x] errorHandler.js atualizado para limpeza de arquivos órfãos (req.file / req.files)
+- [x] errorHandler ainda é o último app.use do app.js
+
+### Parte B — Frontend
+
+- [x] composables/useClickOutside.js criado
+- [x] components/base/BaseModal.vue criado com Teleport to="body"
+- [x] getMyRecipes, getRecipeForEdit, updateRecipe, deleteRecipe criados em recipeService.js
+- [x] getPublicProfile criado em userService.js
+- [x] RecipeCard refatorado — sem <a> gigante, autor clicável (router-link independente), slot actions
+- [x] TheNavbar.vue atualizada com menu suspenso no avatar (useClickOutside, fecha com Esc)
+- [x] TheSidebar.vue atualizada com link Minhas Receitas
+- [x] MyRecipesView.vue criada com grade, botões Editar/Excluir no slot actions, modal fora do card
+- [x] EditRecipeView.vue criada com formulário pré-preenchido, preview local, troca opcional de imagem
+- [x] PublicProfileView.vue criada com isOwner, botão Editar Perfil / Seguir / nenhum conforme estado
+- [x] RecipeDetailView.vue atualizada — autor clicável, botão Editar visível só para o dono
+- [x] UploadRecipeView.vue atualizado — redireciona para /my-recipes após sucesso, link na mensagem

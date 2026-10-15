@@ -3,8 +3,7 @@
  * RecipeDetailView — tela de detalhe de uma receita (Grupo B).
  *
  * isOwner: recebido da API, guardado no estado da tela.
- * Ainda sem uso visual nesta aula — será usado na Aula 09
- * para mostrar botões de editar/deletar apenas ao dono.
+ * Aula 09: botão "Editar" visível apenas para o dono.
  *
  * Por que <img> aponta para o arquivo estático e não para uma rota autenticada?
  * A tag <img> não consegue enviar o header Authorization, por isso a imagem
@@ -71,15 +70,19 @@ onMounted(async () => {
         <span><i class="bi bi-heart me-1" />{{ recipe.likesCount }} curtidas</span>
       </div>
 
-      <!-- Autor -->
-      <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-3 bg-light">
-        <img :src="getProfilePictureUrl(recipe.author?.profilePicture)" :alt="recipe.author?.username"
+      <!-- Autor clicável -->
+      <router-link
+        v-if="recipe.author"
+        :to="{ name: 'public-profile', params: { username: recipe.author.username } }"
+        class="d-flex align-items-center gap-2 mb-3 p-2 rounded-3 bg-light text-decoration-none"
+      >
+        <img :src="getProfilePictureUrl(recipe.author?.profilePicture, recipe.author?.fullName || recipe.author?.username)" :alt="recipe.author?.username"
           class="rounded-circle" style="width:40px; height:40px; object-fit:cover; border:2px solid var(--brand-color);" />
         <div>
-          <p class="mb-0 fw-semibold">{{ recipe.author?.fullName || recipe.author?.username }}</p>
+          <p class="mb-0 fw-semibold text-dark">{{ recipe.author?.fullName || recipe.author?.username }}</p>
           <p class="mb-0 text-muted small">@{{ recipe.author?.username }}</p>
         </div>
-      </div>
+      </router-link>
 
       <!-- Ingredientes -->
       <div class="recipe-section mb-3">
@@ -93,10 +96,20 @@ onMounted(async () => {
         <div class="recipe-section-content">{{ recipe.instructions }}</div>
       </div>
 
-      <!-- Botão voltar -->
-      <button class="btn btn-brand mt-3" @click="router.back()">
-        <i class="bi bi-arrow-left me-2" />Voltar ao Feed
-      </button>
+      <!-- Ações -->
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-brand" @click="router.back()">
+          <i class="bi bi-arrow-left me-2" />Voltar ao Feed
+        </button>
+        <!-- Botão Editar — só visível para o dono -->
+        <router-link
+          v-if="isOwner"
+          :to="{ name: 'recipe-edit', params: { id: recipe.id } }"
+          class="btn btn-outline-secondary"
+        >
+          <i class="bi bi-pencil me-2" />Editar
+        </router-link>
+      </div>
 
     </div>
   </div>

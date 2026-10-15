@@ -1,8 +1,9 @@
 const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL
 
-export function getProfilePictureUrl(filename) {
+export function getProfilePictureUrl(filename, name) {
   if (!filename || filename === 'default-profile.png') {
-    return 'https://ui-avatars.com/api/?background=e25822&color=fff&size=128&name=User'
+    const initials = name ? encodeURIComponent(name.trim().substring(0, 2).toUpperCase()) : 'US'
+    return `https://ui-avatars.com/api/?background=e25822&color=fff&size=128&name=${initials}`
   }
   return `${UPLOADS_URL}/profiles/${filename}`
 }

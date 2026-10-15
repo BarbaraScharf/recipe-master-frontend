@@ -44,9 +44,11 @@ const { authStore } = useAuth()
         <router-link class="sidebar-link" to="/profile/me">
           <i class="bi bi-person-circle me-2" />Meu Perfil
         </router-link>
+        <router-link class="sidebar-link" to="/my-recipes">
+          <i class="bi bi-journal-text me-2" />Minhas Receitas
+        </router-link>
         <!--
           Links adicionados quando os módulos estiverem prontos:
-          Minhas Receitas  → Aula 09
           Minhas Listas    → Aula 13
           Notificações     → Aula 14
         -->
