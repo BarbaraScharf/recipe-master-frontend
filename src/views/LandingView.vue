@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getApiStatus } from '../services/systemService'
+import { useAuth } from '../composables/useAuth'
 
+const { authStore } = useAuth()
 const apiStatus = ref('verificando...')
 
 onMounted(async () => {
@@ -23,7 +25,8 @@ onMounted(async () => {
       Status da API: <strong :style="{ color: apiStatus === 'online' ? '#2a9d5c' : '#e25822' }">{{ apiStatus }}</strong>
     </p>
     <div class="d-flex justify-content-center gap-3 mt-4">
-      <router-link to="/register" class="btn btn-brand btn-lg px-4">Criar conta</router-link>
+      <!-- Só mostra "Criar conta" quando não está logada -->
+      <router-link v-if="!authStore.isAuthenticated" to="/register" class="btn btn-brand btn-lg px-4">Criar conta</router-link>
       <router-link to="/feed" class="btn btn-outline-secondary btn-lg px-4">Explorar receitas</router-link>
     </div>
   </div>

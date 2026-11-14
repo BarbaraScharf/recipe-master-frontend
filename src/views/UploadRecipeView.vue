@@ -130,7 +130,7 @@ async function handleSubmit() {
           <select
             id="category"
             v-model="form.category"
-            class="form-select form-select-lg"
+            class="form-select"
             :class="{ 'is-invalid': errors.category }"
           >
             <option value="" disabled>Selecione uma categoria</option>
@@ -174,7 +174,7 @@ async function handleSubmit() {
               v-model="form.prepTime"
               type="number"
               min="1"
-              class="form-control form-control-lg"
+              class="form-control"
               placeholder="Ex.: 45"
             />
           </div>
@@ -185,7 +185,7 @@ async function handleSubmit() {
               v-model="form.servings"
               type="number"
               min="1"
-              class="form-control form-control-lg"
+              class="form-control"
               placeholder="Ex.: 8"
             />
           </div>

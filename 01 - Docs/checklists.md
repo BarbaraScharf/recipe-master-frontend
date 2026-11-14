@@ -398,3 +398,89 @@
 - [x] PublicProfileView.vue criada com isOwner, botão Editar Perfil / Seguir / nenhum conforme estado
 - [x] RecipeDetailView.vue atualizada — autor clicável, botão Editar visível só para o dono
 - [x] UploadRecipeView.vue atualizado — redireciona para /my-recipes após sucesso, link na mensagem
+
+---
+
+## Aula 10
+
+### Parte A — Backend
+
+- [x] COMMENT_MAX adicionado a config/constants.js
+- [x] commentsCount adicionado ao recipeModel.js
+- [x] Model Like criado com índice único composto (userId + recipeId)
+- [x] Model Comment criado com índices em recipe_id e user_id
+- [x] Associações nos dois sentidos (User↔Like, Recipe↔Like, User↔Comment, Recipe↔Comment) em associations.js
+- [x] Módulo like completo: toggleLike, getLikeStatus, getLikedRecipes
+- [x] Módulo comment completo: addComment, getComments com validador (trim antes de notEmpty)
+- [x] Todas as escritas duplas (linha + contador) dentro de transação
+- [x] Detalhe devolvendo isLiked
+- [x] Exclusão em transação com limpeza de likes e comentários
+- [x] trim() movido para o início nos campos obrigatórios dos validators
+
+### Parte B — Frontend
+
+- [x] likeService.js criado (toggleLike, getLikeStatus, getLikedRecipes)
+- [x] commentService.js criado (addComment, getComments)
+- [x] utils/format.js criado (formatCount, formatDate, timeAgo)
+- [x] LikeButton.vue com atualização otimista e rollback
+- [x] Visitante é redirecionado ao login ao clicar em curtir
+- [x] CommentSection.vue com lista, formulário validado, novo comentário no topo
+- [x] Texto do comentário com {{ }} nunca v-html
+- [x] RecipeDetailView atualizado com LikeButton e CommentSection
+- [x] Contadores (likesCount, commentsCount) adicionados ao RecipeCard
+- [x] LikedRecipesView criado com rota /liked-recipes
+- [x] Link "Receitas Curtidas" adicionado à Sidebar
+
+---
+
+## Aula 11
+
+### Parte A — Backend
+
+- [x] followModel.js criado com índice único composto (follower_id, following_id) e índice simples (following_id)
+- [x] Associações com apelidos declaradas em config/associations.js (Follower / Following)
+- [x] Tabela follows confirmada no banco com os dois índices
+- [x] followService.js criado (toggleFollow com transação, getFollowStatus, getFollowers, getFollowing, getFollowingRecipes)
+- [x] followController.js criado com parseUserId na borda
+- [x] followRoutes.js criado (toggle-follow e follow-status autenticadas; followers e following públicas; /following-recipes autenticada)
+- [x] followRoutes registrado no app.js antes do 404 e errorHandler
+- [x] getFollowingRecipes com Op.in, paginado, retorna [] cedo se não segue ninguém
+- [x] isFollowing devolvido no getPublicProfile (consultado só quando logado e não-dono)
+
+### Parte B — Frontend
+
+- [x] followService.js criado com toggleFollow, getFollowers, getFollowing, getFollowingRecipes
+- [x] FollowButton com defineModel, atualização otimista, rollback e isBusy
+- [x] PublicProfileView atualizado: FollowButton ativo, números de seguidores/seguindo viram links
+- [x] FollowListView criado (uma tela, duas rotas: profile-followers e profile-following)
+- [x] FollowingRecipesView criado com paginação "Carregar mais"
+- [x] Rotas no router/index.js (following-recipes requiresAuth, profile-followers e profile-following públicas)
+- [x] Link "Seguindo" na Sidebar aponta para /following-recipes (rota existente)
+- [x] respostas.md criado com as 6 perguntas respondidas
+
+### Checagem de alcançabilidade (ADR-012)
+
+Caminhos de clique construídos, sem precisar digitar URL:
+
+| Peça | Caminho de clique | Rota |
+|------|-------------------|------|
+| Seguir / deixar de seguir | Clicar no autor de um card (Feed, Detalhe, Comentários) ou em um nome nas listas de seguidores → Perfil Público → botão "Seguir". Visitante: clique leva ao Login (`?redirect=`) e volta ao perfil depois de entrar | `/profile/:username` |
+| Listas de seguidores / seguindo | No Perfil Público ou no Meu Perfil, os números "seguidores" e "seguindo" são links. Dentro da lista, abas Seguidores/Seguindo e botão "← Perfil" | `/profile/:username/followers` e `/profile/:username/following` |
+| Feed de quem eu sigo | Sidebar → "Seguindo" (um clique, logada) | `/following-recipes` |
+
+Verificação do link da Sidebar: o item "Seguindo" aponta para `/following-recipes`, que existe no `router/index.js` (nome `following-recipes`, `requiresAuth: true`). Nenhum ajuste foi necessário no path.
+
+Observação: a busca de usuários por nome não faz parte desta aula (a tela "Buscar" é placeholder). Perfis de outras pessoas são alcançados pelo autor dos cards e pelas listas de seguidores/seguindo.
+
+### Checklist de testes
+
+- [x] toggle-follow sem token 401; id abc 400; seguir a si mesmo 400; usuário 99999 404 (curl-1 a curl-4)
+- [x] A segue B → 201; A de novo → 200; C segue B → followersCount: 2; B segue A (curl-5, otimista.jpg e curl-7)
+- [x] Contadores dos dois lados conferidos (curl-6, curl-7 e curl-7b)
+- [x] follow-status e isFollowing no perfil conferidos (visitante false; A vendo B true; B vendo o próprio perfil false com isOwner true)
+- [x] followers e following conferidos sem password (curl-7 e curl-7b)
+- [x] Feed filtrado: sem token 401; só mostra itens de quem se segue; lista vazia quando se segue só quem não tem receitas (curl-8, curl-8b e teste de clique 7)
+- [x] Banco recusa linha repetida em follows (follows.jpg, erro 1062)
+- [x] Teste de clique 1 a 7: visitante é levado ao login e volta ao perfil; seguir/deixar de seguir muda botão e contador na hora e F5 mantém; contador nunca fica negativo; no próprio perfil não há botão de seguir e os números são links; abas Seguidores/Seguindo trocam sem recarregar e usuário inexistente mostra erro sem quebrar a tela; o botão reflete a pessoa ao trocar de perfil; feed "Seguindo" pela Sidebar mostra só receitas de quem se segue
+- [x] Slow 4G e Offline com rollback (otimista.jpg e rollback.jpg)
+- [x] Regressão: Feed, Detalhe (curtir e comentar), Minhas Receitas, Receitas Curtidas, Meu Perfil (editar) e Login/Logout funcionando, sem erro novo no console

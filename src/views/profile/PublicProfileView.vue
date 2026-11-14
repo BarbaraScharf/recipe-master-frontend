@@ -1,21 +1,21 @@
 <script setup>
 /**
- * PublicProfileView — perfil público de um usuário.
+ * PublicProfileView — perfil público de um usuário. (Aula 11)
  *
- * Comportamento conforme o estado de autenticação:
- *   - Dono do perfil:   botão "Editar Perfil"
- *   - Logado (não dono): botão "Seguir" (ainda sem funcionalidade — Aula futura)
- *   - Visitante anônimo: sem botão de ação
+ * - Dono do perfil:    botão "Editar Perfil"
+ * - Logado (não dono): FollowButton com atualização otimista
+ * - Visitante:         FollowButton (redireciona para login ao clicar)
  *
- * O campo isOwner vem da API (calculado com optionalAuth no backend).
- * isAuthenticated é lido da store local para decidir exibir "Seguir".
+ * isOwner e isFollowing vêm da API (calculados com optionalAuth no backend).
+ * Os números seguidores/seguindo viram router-links para as listas.
  */
 import { ref, onMounted, watch } from 'vue'
-import { useRoute, useRouter }    from 'vue-router'
-import { getPublicProfile }       from '../../services/userService'
-import { useAuth }                from '../../composables/useAuth'
-import { getProfilePictureUrl, getRecipeImageUrl } from '../../utils/media'
-import RecipeCard from '../../components/recipe/RecipeCard.vue'
+import { useRoute, useRouter }   from 'vue-router'
+import { getPublicProfile }      from '../../services/userService'
+import { useAuth }               from '../../composables/useAuth'
+import { getProfilePictureUrl }  from '../../utils/media'
+import RecipeCard   from '../../components/recipe/RecipeCard.vue'
+import FollowButton from '../../components/user/FollowButton.vue'
 
 const route  = useRoute()
 const router = useRouter()
@@ -41,21 +41,18 @@ async function loadProfile(username) {
 
 onMounted(() => loadProfile(route.params.username))
 
-// Recarrega quando o username da URL muda (ex: clicar no autor de outro card)
 watch(() => route.params.username, (newUsername) => {
   if (newUsername) loadProfile(newUsername)
 })
 </script>
 
 <template>
-  <div class="container py-4" style="max-width: 860px;">
+  <div class="container py-4" style="max-width: 860px; margin: 0 auto;">
 
-    <!-- Carregando -->
     <div v-if="isLoading" class="text-center py-5 text-muted">
       <span class="spinner-border spinner-border-sm me-2" />Carregando perfil...
     </div>
 
-    <!-- Erro (404 ou outro) -->
     <div v-else-if="errorMsg" class="text-center py-5">
       <i class="bi bi-person-x text-danger" style="font-size:3rem;" />
       <p class="mt-3 text-danger fw-semibold">{{ errorMsg }}</p>
@@ -64,7 +61,6 @@ watch(() => route.params.username, (newUsername) => {
       </button>
     </div>
 
-    <!-- Perfil carregado -->
     <div v-else-if="profile">
 
       <!-- Cabeçalho do perfil -->
@@ -84,25 +80,38 @@ watch(() => route.params.username, (newUsername) => {
               <span class="stat-number">{{ profile.recipesCount }}</span>
               <span class="stat-label">receitas</span>
             </div>
-            <div class="stat-item">
+            <!-- Seguidores e Seguindo viram links para as listas -->
+            <router-link
+              :to="{ name: 'profile-followers', params: { username: profile.username } }"
+              class="stat-item text-decoration-none"
+            >
               <span class="stat-number">{{ profile.followersCount }}</span>
               <span class="stat-label">seguidores</span>
-            </div>
-            <div class="stat-item">
+            </router-link>
+            <router-link
+              :to="{ name: 'profile-following', params: { username: profile.username } }"
+              class="stat-item text-decoration-none"
+            >
               <span class="stat-number">{{ profile.followingCount }}</span>
               <span class="stat-label">seguindo</span>
-            </div>
+            </router-link>
           </div>
         </div>
 
         <!-- Ações -->
         <div class="profile-actions">
+          <!-- Dono: Editar Perfil -->
           <router-link v-if="profile.isOwner" to="/profile/me" class="btn btn-brand">
             <i class="bi bi-pencil-square me-2" />Editar Perfil
           </router-link>
-          <button v-else-if="authStore.isAuthenticated" class="btn btn-outline-secondary" disabled>
-            <i class="bi bi-person-plus me-2" />Seguir
-          </button>
+
+          <!-- Não-dono: FollowButton (funciona para logado e visitante) -->
+          <FollowButton
+            v-else
+            :user-id="profile.id"
+            v-model:following="profile.isFollowing"
+            v-model:followers-count="profile.followersCount"
+          />
         </div>
       </div>
 
@@ -149,10 +158,7 @@ watch(() => route.params.username, (newUsername) => {
   flex-shrink: 0;
 }
 
-.profile-info {
-  flex: 1;
-  min-width: 200px;
-}
+.profile-info { flex: 1; min-width: 200px; }
 
 .profile-stats {
   display: flex;
@@ -164,12 +170,18 @@ watch(() => route.params.username, (newUsername) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: inherit;
+}
+
+.stat-item:hover .stat-number {
+  color: var(--brand-color);
 }
 
 .stat-number {
   font-size: 1.3rem;
   font-weight: 700;
   color: #222;
+  transition: color 0.15s;
 }
 
 .stat-label {

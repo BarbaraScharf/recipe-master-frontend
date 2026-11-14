@@ -69,6 +69,12 @@ function goToDetail(event) {
         <span v-if="recipe.servings">
           <i class="bi bi-people me-1" />{{ recipe.servings }} porções
         </span>
+        <span v-if="recipe.likesCount !== undefined">
+          <i class="bi bi-heart me-1" />{{ recipe.likesCount }}
+        </span>
+        <span v-if="recipe.commentsCount !== undefined">
+          <i class="bi bi-chat-dots me-1" />{{ recipe.commentsCount }}
+        </span>
       </div>
 
       <!-- Autor clicável de forma independente (não dispara goToDetail) -->

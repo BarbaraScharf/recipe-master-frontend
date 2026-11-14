@@ -99,7 +99,17 @@ async function handleSubmit() {
             <p class="fw-bold mb-1" style="font-size:1.4rem;">@{{ user.username }}</p>
             <p class="text-muted mb-1" style="font-size:1.1rem; word-break: break-all;">{{ user.email }}</p>
             <p class="mb-1" style="font-size:1.1rem;"><i class="bi bi-book me-1" />{{ user.recipesCount }} receitas publicadas</p>
-            <p class="text-muted" style="font-size:1.1rem;">{{ user.followersCount }} seguidores · {{ user.followingCount }} seguindo</p>
+            <p class="text-muted" style="font-size:1.1rem;">
+              <router-link
+                :to="{ name: 'profile-followers', params: { username: user.username } }"
+                class="follow-count-link"
+              >{{ user.followersCount }} seguidores</router-link>
+              ·
+              <router-link
+                :to="{ name: 'profile-following', params: { username: user.username } }"
+                class="follow-count-link"
+              >{{ user.followingCount }} seguindo</router-link>
+            </p>
           </div>
         </div>
 
@@ -160,6 +170,16 @@ async function handleSubmit() {
   box-shadow: 0 8px 32px rgba(0,0,0,0.10);
   padding: 2rem !important;
   font-size: 1.1rem;
+}
+
+.follow-count-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.follow-count-link:hover {
+  color: var(--brand-color);
+  text-decoration: underline;
 }
 
 .profile-avatar {

@@ -69,7 +69,7 @@ async function handleLogout() {
               :alt="authStore.user?.username"
               class="avatar-img"
             />
-            <span class="text-white small ms-1">@{{ authStore.user?.username }}</span>
+            <span class="text-white ms-1" style="font-size: 1rem;">@{{ authStore.user?.username }}</span>
             <i class="bi text-white ms-1" :class="menuOpen ? 'bi-chevron-up' : 'bi-chevron-down'" />
           </button>
 

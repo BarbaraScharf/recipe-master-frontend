@@ -1,24 +1,21 @@
 <script setup>
 /**
  * RecipeDetailView — tela de detalhe de uma receita (Grupo B).
- *
- * isOwner: recebido da API, guardado no estado da tela.
- * Aula 09: botão "Editar" visível apenas para o dono.
- *
- * Por que <img> aponta para o arquivo estático e não para uma rota autenticada?
- * A tag <img> não consegue enviar o header Authorization, por isso a imagem
- * precisa ser servida via express.static (sem token), no caminho /uploads/recipes/.
+ * Aula 10: botão de curtir (LikeButton) e seção de comentários (CommentSection).
  */
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getRecipeById } from '../services/recipeService'
 import { getRecipeImageUrl, getProfilePictureUrl } from '../utils/media'
+import LikeButton     from '../components/recipe/LikeButton.vue'
+import CommentSection from '../components/recipe/CommentSection.vue'
 
 const route  = useRoute()
 const router = useRouter()
 
 const recipe    = ref(null)
 const isOwner   = ref(false)
+const isLiked   = ref(false)
 const isLoading = ref(true)
 const errorMsg  = ref('')
 
@@ -27,12 +24,17 @@ onMounted(async () => {
     const response   = await getRecipeById(route.params.id)
     recipe.value     = response.data
     isOwner.value    = response.data.isOwner
+    isLiked.value    = response.data.isLiked
   } catch (err) {
     errorMsg.value = err.message || 'Receita não encontrada.'
   } finally {
     isLoading.value = false
   }
 })
+
+function onCommentAdded() {
+  if (recipe.value) recipe.value.commentsCount++
+}
 </script>
 
 <template>
@@ -50,24 +52,24 @@ onMounted(async () => {
       </button>
     </div>
 
-    <div v-else-if="recipe" style="font-size: 0.9rem;">
+    <div v-else-if="recipe" style="font-size: 1rem;">
 
       <!-- Imagem principal -->
-      <div class="recipe-detail-img-wrapper mb-3" v-if="getRecipeImageUrl(recipe.image)">
+      <div class="recipe-detail-img-wrapper mb-4" v-if="getRecipeImageUrl(recipe.image)">
         <img :src="getRecipeImageUrl(recipe.image)" :alt="recipe.title" class="recipe-detail-img" />
       </div>
 
       <!-- Cabeçalho -->
-      <span class="badge mb-2" style="background-color: var(--brand-color);">{{ recipe.category }}</span>
-      <h2 class="fw-bold mb-1">{{ recipe.title }}</h2>
-      <p v-if="recipe.description" class="text-muted mb-2">{{ recipe.description }}</p>
+      <span class="badge mb-2" style="background-color: var(--brand-color); font-size: 0.85rem; padding: 0.4rem 0.8rem;">{{ recipe.category }}</span>
+      <h2 class="fw-bold mb-1" style="font-size: 1.8rem;">{{ recipe.title }}</h2>
+      <p v-if="recipe.description" class="text-muted mb-3" style="font-size: 1rem;">{{ recipe.description }}</p>
 
       <!-- Meta -->
-      <div class="d-flex gap-3 mb-3 text-muted small">
+      <div class="d-flex gap-3 mb-4 text-muted flex-wrap" style="font-size: 0.95rem;">
         <span v-if="recipe.prepTime"><i class="bi bi-clock me-1" />{{ recipe.prepTime }} min</span>
         <span v-if="recipe.servings"><i class="bi bi-people me-1" />{{ recipe.servings }} porções</span>
         <span><i class="bi bi-eye me-1" />{{ recipe.viewsCount }} visualizações</span>
-        <span><i class="bi bi-heart me-1" />{{ recipe.likesCount }} curtidas</span>
+        <span><i class="bi bi-chat-dots me-1" />{{ recipe.commentsCount }} comentários</span>
       </div>
 
       <!-- Autor clicável -->
@@ -97,10 +99,18 @@ onMounted(async () => {
       </div>
 
       <!-- Ações -->
-      <div class="d-flex gap-2 mt-3">
+      <div class="d-flex align-items-center gap-3 mt-3 flex-wrap">
         <button class="btn btn-brand" @click="router.back()">
           <i class="bi bi-arrow-left me-2" />Voltar ao Feed
         </button>
+
+        <!-- Botão de curtir -->
+        <LikeButton
+          :recipe-id="recipe.id"
+          v-model:liked="isLiked"
+          v-model:likes-count="recipe.likesCount"
+        />
+
         <!-- Botão Editar — só visível para o dono -->
         <router-link
           v-if="isOwner"
@@ -110,6 +120,12 @@ onMounted(async () => {
           <i class="bi bi-pencil me-2" />Editar
         </router-link>
       </div>
+
+      <!-- Seção de comentários -->
+      <CommentSection
+        :recipe-id="recipe.id"
+        @comment-added="onCommentAdded"
+      />
 
     </div>
   </div>
