@@ -1,11 +1,12 @@
-<script setup>
+﻿<script setup>
 /**
  * RecipeDetailView — tela de detalhe de uma receita (Grupo B).
  * Aula 10: botão de curtir (LikeButton) e seção de comentários (CommentSection).
  */
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getRecipeById } from '../services/recipeService'
+import { useAsyncData } from '../composables/useAsyncData'
 import { getRecipeImageUrl, getProfilePictureUrl } from '../utils/media'
 import LikeButton     from '../components/recipe/LikeButton.vue'
 import CommentSection from '../components/recipe/CommentSection.vue'
@@ -13,25 +14,19 @@ import CommentSection from '../components/recipe/CommentSection.vue'
 const route  = useRoute()
 const router = useRouter()
 
-const recipe    = ref(null)
-const isOwner   = ref(false)
-const isLiked   = ref(false)
-const isLoading = ref(true)
-const errorMsg  = ref('')
+// Recarrega sozinho quando o id da rota muda
+const { data: recipe, isLoading, error: errorMsg } = useAsyncData(
+  () => getRecipeById(route.params.id),
+  { watch: () => route.params.id }
+)
 
-onMounted(async () => {
-  try {
-    const response   = await getRecipeById(route.params.id)
-    recipe.value     = response.data
-    isOwner.value    = response.data.isOwner
-    isLiked.value    = response.data.isLiked
-  } catch (err) {
-    errorMsg.value = err.message || 'Receita não encontrada.'
-  } finally {
-    isLoading.value = false
-  }
+const isOwner = ref(false)
+const isLiked = ref(false)
+
+watch(recipe, (value) => {
+  isOwner.value = value?.isOwner ?? false
+  isLiked.value = value?.isLiked ?? false
 })
-
 function onCommentAdded() {
   if (recipe.value) recipe.value.commentsCount++
 }
@@ -165,3 +160,4 @@ function onCommentAdded() {
   color: #333;
 }
 </style>
+

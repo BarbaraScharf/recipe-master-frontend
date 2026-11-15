@@ -1,10 +1,13 @@
-<script setup>
+﻿<script setup>
 import { ref, onMounted } from 'vue'
 import { getMyProfile, updateProfile } from '../../services/authService'
+import { LIMITS } from '../../config/constants'
+import { useAuthStore } from '../../stores/auth'
 import { getProfilePictureUrl } from '../../utils/media'
 import BaseInput from '../../components/base/BaseInput.vue'
 import BaseButton from '../../components/base/BaseButton.vue'
 
+const authStore = useAuthStore()
 const user = ref(null)
 const isLoading = ref(true)
 const isSaving = ref(false)
@@ -54,6 +57,11 @@ async function handleSubmit() {
 
     const response = await updateProfile(formData)
     user.value = response.data
+    authStore.updateUser({
+      fullName: response.data.fullName,
+      bio: response.data.bio,
+      profilePicture: response.data.profilePicture,
+    })
     form.value.fullName = response.data.fullName || ''
     form.value.bio = response.data.bio || ''
     previewUrl.value = null
@@ -136,7 +144,7 @@ async function handleSubmit() {
                   label="Bio"
                   placeholder="Conte um pouco sobre você..."
                   :rows="3"
-                  :maxlength="255"
+                  :maxlength="LIMITS.BIO_MAX"
                 />
 
                 <div v-if="apiErrorMessage" class="alert alert-danger py-2 mt-1 mb-2" role="alert">
@@ -189,3 +197,5 @@ async function handleSubmit() {
   border: 4px solid var(--brand-color);
 }
 </style>
+
+

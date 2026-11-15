@@ -1,43 +1,11 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+﻿<script setup>
 import { getFeed } from '../services/userService'
+import { usePaginatedList } from '../composables/usePaginatedList'
 import RecipeCard from '../components/recipe/RecipeCard.vue'
 
-const recipes     = ref([])
-const isLoading   = ref(true)
-const isLoadingMore = ref(false)
-const errorMsg    = ref('')
-const currentPage = ref(1)
-const totalPages  = ref(1)
-const LIMIT       = 3
-
-async function loadRecipes(page = 1) {
-  try {
-    const response = await getFeed(page, LIMIT)
-    if (page === 1) {
-      recipes.value = response.data.recipes
-    } else {
-      recipes.value.push(...response.data.recipes)
-    }
-    currentPage.value = page
-    totalPages.value  = response.data.totalPages
-  } catch (err) {
-    errorMsg.value = err.message
-  }
-}
-
-onMounted(async () => {
-  await loadRecipes(1)
-  isLoading.value = false
-})
-
-async function loadMore() {
-  isLoadingMore.value = true
-  await loadRecipes(currentPage.value + 1)
-  isLoadingMore.value = false
-}
-
-const hasMore = () => currentPage.value < totalPages.value
+const {
+  items: recipes, isLoading, isLoadingMore, error: errorMsg, loadMoreError, hasMore, loadMore,
+} = usePaginatedList((page, limit) => getFeed(page, limit))
 </script>
 
 <template>
@@ -70,7 +38,7 @@ const hasMore = () => currentPage.value < totalPages.value
       </div>
 
       <!-- Botão Carregar mais -->
-      <div v-if="hasMore()" class="text-center mt-4">
+      <div v-if="hasMore" class="text-center mt-4">
         <button
           class="btn btn-brand btn-lg px-5"
           :disabled="isLoadingMore"
@@ -81,7 +49,9 @@ const hasMore = () => currentPage.value < totalPages.value
         </button>
       </div>
 
-      <p v-else class="text-center text-muted mt-4 small">
+      <p v-if="loadMoreError" class="text-center text-danger mt-3 small">{{ loadMoreError }}</p>
+
+      <p v-else-if="!hasMore" class="text-center text-muted mt-4 small">
         Você viu todas as receitas disponíveis.
       </p>
     </div>
@@ -95,3 +65,5 @@ const hasMore = () => currentPage.value < totalPages.value
   gap: 1.5rem;
 }
 </style>
+
+

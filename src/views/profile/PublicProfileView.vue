@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * PublicProfileView — perfil público de um usuário. (Aula 11)
  *
@@ -9,9 +9,9 @@
  * isOwner e isFollowing vêm da API (calculados com optionalAuth no backend).
  * Os números seguidores/seguindo viram router-links para as listas.
  */
-import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter }   from 'vue-router'
 import { getPublicProfile }      from '../../services/userService'
+import { useAsyncData }          from '../../composables/useAsyncData'
 import { useAuth }               from '../../composables/useAuth'
 import { getProfilePictureUrl }  from '../../utils/media'
 import RecipeCard   from '../../components/recipe/RecipeCard.vue'
@@ -21,30 +21,11 @@ const route  = useRoute()
 const router = useRouter()
 const { authStore } = useAuth()
 
-const profile   = ref(null)
-const isLoading = ref(true)
-const errorMsg  = ref('')
-
-async function loadProfile(username) {
-  isLoading.value = true
-  errorMsg.value  = ''
-  profile.value   = null
-  try {
-    const response = await getPublicProfile(username)
-    profile.value  = response.data
-  } catch (err) {
-    errorMsg.value = err.message
-  } finally {
-    isLoading.value = false
-  }
-}
-
-onMounted(() => loadProfile(route.params.username))
-
-watch(() => route.params.username, (newUsername) => {
-  if (newUsername) loadProfile(newUsername)
-})
-</script>
+// Recarrega sozinho quando o username da rota muda
+const { data: profile, isLoading, error: errorMsg } = useAsyncData(
+  () => getPublicProfile(route.params.username),
+  { watch: () => route.params.username }
+)</script>
 
 <template>
   <div class="container py-4" style="max-width: 860px; margin: 0 auto;">
@@ -200,3 +181,4 @@ watch(() => route.params.username, (newUsername) => {
   gap: 1.5rem;
 }
 </style>
+

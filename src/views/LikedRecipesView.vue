@@ -1,22 +1,11 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+﻿<script setup>
+import { computed } from 'vue'
 import { getLikedRecipes } from '../services/likeService'
+import { useAsyncData } from '../composables/useAsyncData'
 import RecipeCard from '../components/recipe/RecipeCard.vue'
 
-const recipes   = ref([])
-const isLoading = ref(true)
-const errorMsg  = ref('')
-
-onMounted(async () => {
-  try {
-    const response = await getLikedRecipes()
-    recipes.value = response.data.recipes
-  } catch (err) {
-    errorMsg.value = err.message
-  } finally {
-    isLoading.value = false
-  }
-})
+const { data, isLoading, error: errorMsg } = useAsyncData(() => getLikedRecipes())
+const recipes = computed(() => data.value?.recipes ?? [])
 </script>
 
 <template>
@@ -79,3 +68,4 @@ onMounted(async () => {
   gap: 1.5rem;
 }
 </style>
+

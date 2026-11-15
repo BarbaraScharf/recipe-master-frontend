@@ -1,43 +1,11 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+﻿<script setup>
 import { getFollowingRecipes } from '../services/followService'
+import { usePaginatedList } from '../composables/usePaginatedList'
 import RecipeCard from '../components/recipe/RecipeCard.vue'
 
-const recipes = ref([])
-const isLoading = ref(true)
-const isLoadingMore = ref(false)
-const errorMsg = ref('')
-const currentPage = ref(1)
-const totalPages = ref(0)
-const LIMIT = 3
-
-async function loadRecipes(page = 1) {
-  errorMsg.value = ''
-  try {
-    const response = await getFollowingRecipes(page, LIMIT)
-    if (page === 1) {
-      recipes.value = response.data.recipes
-    } else {
-      recipes.value.push(...response.data.recipes)
-    }
-    currentPage.value = page
-    totalPages.value = response.data.totalPages
-  } catch (error) {
-    errorMsg.value = error.message
-  }
-}
-
-onMounted(async () => {
-  await loadRecipes()
-  isLoading.value = false
-})
-
-async function loadMore() {
-  if (isLoadingMore.value || currentPage.value >= totalPages.value) return
-  isLoadingMore.value = true
-  await loadRecipes(currentPage.value + 1)
-  isLoadingMore.value = false
-}
+const {
+  items: recipes, isLoading, isLoadingMore, error: errorMsg, loadMoreError, hasMore, loadMore,
+} = usePaginatedList((page, limit) => getFollowingRecipes(page, limit))
 </script>
 
 <template>
@@ -67,7 +35,7 @@ async function loadMore() {
         <RecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
       </div>
 
-      <div v-if="currentPage < totalPages" class="text-center mt-4">
+      <div v-if="hasMore" class="text-center mt-4">
         <button
           class="btn btn-brand btn-lg px-5"
           :disabled="isLoadingMore"
@@ -77,7 +45,8 @@ async function loadMore() {
           {{ isLoadingMore ? 'Carregando...' : 'Carregar mais' }}
         </button>
       </div>
-      <p v-else class="text-center text-muted mt-4 small">Você viu todas as receitas.</p>
+      <p v-if="loadMoreError" class="text-center text-danger mt-3 small">{{ loadMoreError }}</p>
+      <p v-else-if="!hasMore" class="text-center text-muted mt-4 small">Você viu todas as receitas.</p>
     </template>
   </div>
 </template>
@@ -110,3 +79,5 @@ async function loadMore() {
   gap: 1.5rem;
 }
 </style>
+
+

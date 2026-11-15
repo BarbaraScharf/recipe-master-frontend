@@ -1,9 +1,11 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { login as loginService, logout as logoutService } from '../services/authService'
 
-const TOKEN_KEY = 'auth_token'
-const USER_KEY = 'auth_user'
+import { STORAGE_KEYS } from '../config/constants'
+
+const TOKEN_KEY = STORAGE_KEYS.TOKEN
+const USER_KEY = STORAGE_KEYS.USER
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem(TOKEN_KEY) || null)
@@ -30,6 +32,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Atualiza os dados do usuário logado (ex.: depois de editar o perfil) para a navbar refletir na hora
+  function updateUser(data) {
+    user.value = { ...user.value, ...data }
+    localStorage.setItem(USER_KEY, JSON.stringify(user.value))
+  }
+
   function clearSession() {
     token.value = null
     user.value = null
@@ -37,5 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(USER_KEY)
   }
 
-  return { token, user, isAuthenticated, isAdmin, login, logout, clearSession }
+  return { token, user, isAuthenticated, isAdmin, login, logout, updateUser, clearSession }
 })
+
+

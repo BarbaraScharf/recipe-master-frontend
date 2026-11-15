@@ -1,8 +1,9 @@
-<script setup>
-import { ref, watch } from 'vue'
+﻿<script setup>
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPublicProfile } from '../../services/userService'
 import { getFollowers, getFollowing } from '../../services/followService'
+import { useAsyncData } from '../../composables/useAsyncData'
 import { getProfilePictureUrl } from '../../utils/media'
 
 const props = defineProps({
@@ -11,42 +12,23 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
-const profile = ref(null)
-const users = ref([])
-const isLoading = ref(true)
-const errorMsg = ref('')
-let requestId = 0
 
-async function loadList() {
-  const currentRequest = ++requestId
-  const username = route.params.username
-  profile.value = null
-  users.value = []
-  errorMsg.value = ''
-  isLoading.value = true
-
-  try {
-    const profileResponse = await getPublicProfile(username)
+// Busca o perfil e depois a lista. Recarrega quando o tipo da lista ou o username mudam.
+// A proteção contra resposta antiga (corrida) está no useAsyncData.
+const { data, isLoading, error: errorMsg } = useAsyncData(
+  async () => {
+    const profileResponse = await getPublicProfile(route.params.username)
     const loadedProfile = profileResponse.data
     const listResponse = props.kind === 'followers'
       ? await getFollowers(loadedProfile.id)
       : await getFollowing(loadedProfile.id)
+    return { data: { profile: loadedProfile, users: listResponse.data } }
+  },
+  { watch: () => [props.kind, route.params.username] }
+)
 
-    if (currentRequest !== requestId) return
-    profile.value = loadedProfile
-    users.value = listResponse.data
-  } catch (error) {
-    if (currentRequest === requestId) {
-      errorMsg.value = error.message
-    }
-  } finally {
-    if (currentRequest === requestId) {
-      isLoading.value = false
-    }
-  }
-}
-
-watch(() => [props.kind, route.params.username], loadList, { immediate: true })
+const profile = computed(() => data.value?.profile ?? null)
+const users = computed(() => data.value?.users ?? [])
 </script>
 
 <template>
@@ -166,3 +148,4 @@ watch(() => [props.kind, route.params.username], loadList, { immediate: true })
   border-bottom: none !important;
 }
 </style>
+

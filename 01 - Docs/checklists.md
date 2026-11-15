@@ -1,4 +1,4 @@
-# Checklists — RecipeMaster
+﻿# Checklists — RecipeMaster
 
 ---
 
@@ -484,3 +484,39 @@ Observação: a busca de usuários por nome não faz parte desta aula (a tela "B
 - [x] Teste de clique 1 a 7: visitante é levado ao login e volta ao perfil; seguir/deixar de seguir muda botão e contador na hora e F5 mantém; contador nunca fica negativo; no próprio perfil não há botão de seguir e os números são links; abas Seguidores/Seguindo trocam sem recarregar e usuário inexistente mostra erro sem quebrar a tela; o botão reflete a pessoa ao trocar de perfil; feed "Seguindo" pela Sidebar mostra só receitas de quem se segue
 - [x] Slow 4G e Offline com rollback (otimista.jpg e rollback.jpg)
 - [x] Regressão: Feed, Detalhe (curtir e comentar), Minhas Receitas, Receitas Curtidas, Meu Perfil (editar) e Login/Logout funcionando, sem erro novo no console
+
+---
+## Aula 12
+
+### Parte A — Backend
+- [x] checkpoint-02.md criado, com as respostas dos Blocos 2.1 a 2.6 e as três perguntas extras
+- [x] Problema da paginação reproduzido antes da correção (limit=-3 e page=-2 deram 500; limit=100000 devolveu tudo)
+- [x] PAGINATION em config/constants.js e utils/pagination.js criados e usados nos dois controllers de feed e nos dois services
+- [x] Testes de paginação com o resultado esperado (limit=-3, abc e page=-2 usam o padrão; limit=100000 vira 50; limit=1 e page=2&limit=1 funcionam)
+- [x] createRecipe dentro de sequelize.transaction com { transaction: t } nas duas escritas
+- [x] Criação testada: 201 e recipesCount incrementado
+- [x] Id inválido corrigido: utils/parseId.js usado em recipe, like e comment (400 em vez de 500)
+- [x] Regressão da API com todas as chamadas respondendo como esperado (regressao-1 a regressao-10)
+
+### Parte B — Frontend
+- [x] src/config/constants.js criado (STORAGE_KEYS, LIMITS iguais aos da API, PAGE_SIZE, TOAST_DURATION, MESSAGES)
+- [x] api.js, stores/auth.js e os services de feed usam as constantes
+- [x] useToast e ToastContainer criados, container montado uma vez no App.vue (z-index acima do BaseModal)
+- [x] Interceptor com notifyIfNeeded: ação que falha vira toast, leitura é da tela, 401 vai ao login
+- [x] silent: true só nos formulários (login, cadastro, logout, editar perfil, criar e editar receita, comentar)
+- [x] useAsyncData e usePaginatedList criados
+- [x] Cada tela de leitura testada no navegador depois da troca (feita junto com a regressão completa)
+- [x] Telas de leitura refatoradas: Detalhe, Perfil Público, Curtidas, Minhas Receitas, Listas de seguidores/seguindo, Comentários, Feed e Feed de quem sigo
+- [x] Decisão registrada: MyProfileView, LoginView, RegisterView, UploadRecipeView e EditRecipeView ficaram de fora porque apenas preenchem um formulário e o erro pertence ao formulário
+- [x] useAuthenticatedAction criado e usado em LikeButton e FollowButton, sem errorMessage local
+- [x] Limites dos formulários trocados por LIMITS.* (RegisterView e MyProfileView)
+- [x] respostas.md com as 7 perguntas
+- [x] Prints de toast (toast-erro, toast-sucesso, toast-modal, uma-requisicao, formulario-sem-toast) e de paginação (antes e depois)
+- [x] Teste de regressão completo no navegador com conta nova (cadastro, perfil, receita com foto, edição, feed com Carregar mais, curtir, comentar, curtidas, seguir, seguidores/seguindo, feed Seguindo, toast com Offline, toast de exclusão, visitante levado ao login e de volta à receita), sem erros vermelhos no Console além dos de Offline
+- [x] Bug achado na regressão e corrigido: depois de editar o perfil, a foto não aparecia na navbar (MyProfileView agora atualiza o usuário da store com authStore.updateUser)
+- [x] Toasts aumentados (fonte, padding e largura) depois do teste visual
+- [x] Pendências da Seção 13 registradas no checkpoint-02.md com a aula nomeada (Aula 13)
+
+
+
+

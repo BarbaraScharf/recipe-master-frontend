@@ -1,4 +1,4 @@
-/**
+﻿/**
  * recipeService.js
  *
  * Service da entidade Recipe.
@@ -15,6 +15,7 @@ import api from './api'
 export function createRecipe(formData, onUploadProgress) {
   return api.post('/recipes', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    silent: true,
     onUploadProgress: (progressEvent) => {
       if (onUploadProgress && progressEvent.total) {
         const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100)
@@ -38,10 +39,12 @@ export function getRecipeForEdit(id) {
 
 export function updateRecipe(id, formData) {
   return api.put(`/recipes/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    silent: true,
   })
 }
 
 export function deleteRecipe(id) {
   return api.delete(`/recipes/${id}`)
 }
+

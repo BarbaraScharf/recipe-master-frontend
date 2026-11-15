@@ -1,11 +1,11 @@
-<script setup>
+﻿<script setup>
 /**
  * LikeButton — botão de curtida com atualização otimista.
  *
  * Atualização otimista — três passos:
  *   1. Atualiza a UI imediatamente (antes de chamar a API)
  *   2. Chama a API
- *   3. Se a API falhar, desfaz (rollback) a mudança visual e mostra erro
+ *   3. Se a API falhar, desfaz (rollback) a mudança visual (o erro aparece como toast)
  *
  * Quando NÃO usar otimismo: ações destrutivas (delete), pagamentos, ou
  * qualquer ação que não seja facilmente reversível na UI.
@@ -14,9 +14,8 @@
  * e volta ao detalhe depois de entrar (graças ao guarda de rota existente).
  */
 import { ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { toggleLike } from '../../services/likeService'
-import { useAuth } from '../../composables/useAuth'
+import { useAuthenticatedAction } from '../../composables/useAuthenticatedAction'
 import { formatCount } from '../../utils/format'
 
 const props = defineProps({
@@ -27,29 +26,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:liked', 'update:likesCount'])
 
-const { authStore } = useAuth()
-const router = useRouter()
-const route  = useRoute()
-
 const localLiked      = ref(props.liked)
 const localLikesCount = ref(props.likesCount)
-const isBusy          = ref(false)
-const errorMsg        = ref('')
 
 // Sincroniza quando o pai atualizar as props
 watch(() => props.liked,      v => { localLiked.value      = v })
 watch(() => props.likesCount, v => { localLikesCount.value = v })
 
-async function handleClick() {
-  if (!authStore.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: route.fullPath } })
-    return
-  }
-
-  if (isBusy.value) return
-  isBusy.value = true
-  errorMsg.value = ''
-
+// useAuthenticatedAction cuida do visitante (vai para o login) e de cliques repetidos (isBusy).
+// O erro da API aparece como toast, aqui só desfazemos a mudança visual.
+const { run: handleClick, isBusy } = useAuthenticatedAction(async () => {
   // Passo 1 — atualiza UI imediatamente (otimista)
   const previousLiked      = localLiked.value
   const previousLikesCount = localLikesCount.value
@@ -57,22 +43,18 @@ async function handleClick() {
   localLikesCount.value = localLiked.value ? previousLikesCount + 1 : previousLikesCount - 1
 
   try {
-    // Passo 2 — chama a API
+    // Passo 2 — chama a API e sincroniza com o valor real
     const response = await toggleLike(props.recipeId)
-    // Sincroniza com o valor real retornado pela API
     localLiked.value      = response.data.liked
     localLikesCount.value = response.data.likesCount
     emit('update:liked',      localLiked.value)
     emit('update:likesCount', localLikesCount.value)
-  } catch (err) {
+  } catch {
     // Passo 3 — rollback
     localLiked.value      = previousLiked
     localLikesCount.value = previousLikesCount
-    errorMsg.value = err.message || 'Erro ao curtir.'
-  } finally {
-    isBusy.value = false
   }
-}
+})
 </script>
 
 <template>
@@ -88,7 +70,6 @@ async function handleClick() {
       <i :class="localLiked ? 'bi bi-heart-fill' : 'bi bi-heart'" />
       <span>{{ formatCount(localLikesCount) }}</span>
     </button>
-    <p v-if="errorMsg" class="like-error">{{ errorMsg }}</p>
   </div>
 </template>
 
@@ -131,9 +112,7 @@ async function handleClick() {
   cursor: not-allowed;
 }
 
-.like-error {
-  font-size: 0.8rem;
-  color: #dc3545;
-  margin: 0;
-}
 </style>
+
+
+

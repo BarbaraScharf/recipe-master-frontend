@@ -1,56 +1,48 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+﻿<script setup>
+import { ref, watch } from 'vue'
 import { getMyRecipes, deleteRecipe } from '../services/recipeService'
+import { useAsyncData } from '../composables/useAsyncData'
+import { useToast } from '../composables/useToast'
 import RecipeCard from '../components/recipe/RecipeCard.vue'
 import BaseModal  from '../components/base/BaseModal.vue'
 
-const recipes   = ref([])
-const isLoading = ref(true)
-const errorMsg  = ref('')
+const toast = useToast()
+
+const { data, isLoading, error: errorMsg } = useAsyncData(() => getMyRecipes())
+
+// Cópia local da lista, para tirar a receita da tela depois de excluir
+const recipes = ref([])
+watch(data, (value) => { recipes.value = value?.recipes ?? [] })
 
 const showDeleteModal = ref(false)
 const recipeToDelete  = ref(null)
 const isDeleting      = ref(false)
-const deleteError     = ref('')
-
-onMounted(async () => {
-  try {
-    const response = await getMyRecipes()
-    recipes.value = response.data.recipes
-  } catch (err) {
-    errorMsg.value = err.message
-  } finally {
-    isLoading.value = false
-  }
-})
 
 function openDeleteModal(recipe) {
   recipeToDelete.value  = recipe
-  deleteError.value     = ''
   showDeleteModal.value = true
 }
 
 function closeDeleteModal() {
   showDeleteModal.value = false
   recipeToDelete.value  = null
-  deleteError.value     = ''
 }
 
+// Se a exclusão falhar, o toast de erro vem do interceptor e o modal continua aberto.
 async function confirmDelete() {
   if (!recipeToDelete.value) return
-  isDeleting.value  = true
-  deleteError.value = ''
+  isDeleting.value = true
   try {
     await deleteRecipe(recipeToDelete.value.id)
     recipes.value = recipes.value.filter(r => r.id !== recipeToDelete.value.id)
     closeDeleteModal()
-  } catch (err) {
-    deleteError.value = err.message
+    toast.success('Receita excluída com sucesso.')
+  } catch {
+    // toast de erro já mostrado pelo interceptor
   } finally {
     isDeleting.value = false
   }
-}
-</script>
+}</script>
 
 <template>
   <div class="container py-5">
@@ -115,9 +107,6 @@ async function confirmDelete() {
         Tem certeza que deseja excluir
         <strong>{{ recipeToDelete?.title }}</strong>?
         Esta ação não pode ser desfeita.
-      </p>
-      <p v-if="deleteError" class="text-danger small mb-0">
-        <i class="bi bi-exclamation-circle me-1" />{{ deleteError }}
       </p>
       <template #footer>
         <button class="btn btn-secondary" @click="closeDeleteModal" :disabled="isDeleting">
@@ -195,3 +184,4 @@ async function confirmDelete() {
   color: #fff;
 }
 </style>
+

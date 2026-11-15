@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * CommentSection — seção de comentários de uma receita.
  *
@@ -8,10 +8,12 @@
  *
  * Quebras de linha são preservadas via CSS white-space: pre-line.
  */
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { addComment, getComments } from '../../services/commentService'
+import { useAsyncData } from '../../composables/useAsyncData'
 import { useAuth } from '../../composables/useAuth'
+import { LIMITS } from '../../config/constants'
 import { getProfilePictureUrl } from '../../utils/media'
 import { timeAgo } from '../../utils/format'
 
@@ -25,32 +27,21 @@ const { authStore } = useAuth()
 const router = useRouter()
 const route  = useRoute()
 
-const comments    = ref([])
-const isLoading   = ref(true)
-const errorMsg    = ref('')
+// Leitura: se falhar, o erro aparece no lugar da lista (não é toast)
+const { data, isLoading, error: errorMsg } = useAsyncData(
+  () => getComments(props.recipeId),
+  { watch: () => props.recipeId }
+)
+
+// Cópia local da lista, para colocar o novo comentário no topo sem recarregar
+const comments = ref([])
+watch(data, (value) => { comments.value = value?.comments ?? [] })
+
 const newContent  = ref('')
 const formError   = ref('')
 const isSubmitting = ref(false)
 
-const COMMENT_MAX = 500
-
-onMounted(async () => {
-  await loadComments()
-})
-
-async function loadComments() {
-  isLoading.value = true
-  errorMsg.value = ''
-  try {
-    const response = await getComments(props.recipeId)
-    comments.value = response.data.comments
-  } catch (err) {
-    errorMsg.value = err.message
-  } finally {
-    isLoading.value = false
-  }
-}
-
+const COMMENT_MAX = LIMITS.COMMENT_MAX
 function validateForm() {
   formError.value = ''
   const trimmed = newContent.value.trim()
@@ -288,3 +279,4 @@ async function handleSubmit() {
   line-height: 1.6;
 }
 </style>
+
