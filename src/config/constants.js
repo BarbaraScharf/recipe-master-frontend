@@ -38,3 +38,26 @@ export const SEARCH = {
   DEBOUNCE_MS: 400,
 }
 
+export const NOTIFICATIONS = {
+  // De quanto em quanto tempo o sino pergunta à API (30 s)
+  POLL_MS: 30000,
+}
+
+// Texto depois do @usuário em cada tipo de notificação
+export const NOTIFICATION_TEXT = {
+  like: 'curtiu a sua receita',
+  comment: 'comentou na sua receita',
+  follow: 'começou a seguir você',
+}
+
+// O banco guarda a chave (value); a tela mostra o rótulo (label). Mesma ordem da API.
+export const REPORT_REASONS = [
+  { value: 'inappropriate_content', label: 'Conteúdo impróprio' },
+  { value: 'harassment', label: 'Assédio ou discurso de ódio' },
+  { value: 'spam', label: 'Spam ou golpes' },
+  { value: 'copyright', label: 'Violação de direitos autorais' },
+  { value: 'other', label: 'Outro' },
+]
+
+
+

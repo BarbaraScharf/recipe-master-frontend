@@ -50,7 +50,7 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <BaseModal :show="true" title="Nova lista" @close="emit('close')">
+  <BaseModal :show="true" title="Nova lista" :busy="isSubmitting" @close="emit('close')">
     <form id="create-list-form" novalidate @submit.prevent="handleSubmit">
       <BaseInput
         id="list-title"

@@ -584,3 +584,65 @@ Decisão de escopo (lacuna conhecida): a lista pública de outra pessoa só é a
 
 
 
+
+---
+## Aula 14
+
+### Nomes no meu projeto
+| Nome | Shortz-App | RecipeMaster |
+|---|---|---|
+| Model de notificação | Notification (`notifications`, módulo notification) | Notification (`notifications`, módulo notification) |
+| Model de denúncia | Report (`reports`, módulo report) | Report (`reports`, módulo report) |
+| Id do item nas duas tabelas | videoId | recipeId |
+| Rota da denúncia | POST /api/videos/:videoId/report | POST /api/recipes/:recipeId/report |
+| Texto de "curtiu" | curtiu o seu vídeo | curtiu a sua receita |
+| Texto de "comentou" | comentou no seu vídeo | comentou na sua receita |
+| Tela e componentes | NotificationsView, ReportVideoModal | NotificationsView, ReportRecipeModal |
+| Os três gatilhos | toggleLike, addComment, toggleFollow | likeService.toggleLike, commentService.addComment, followService.toggleFollow |
+
+### Parte A — Backend
+- [x] Constantes (NOTIFICATION.TYPES e REPORT.REASONS), dois models e cinco associações
+- [x] Tabelas, índices, ENUM e chaves estrangeiras conferidos no banco (reports: NO ACTION; notifications: SET NULL)
+- [x] Quatro arquivos do módulo notification, registrados no app.js
+- [x] GET /notifications sem token responde 401
+- [x] Quatro arquivos do módulo report (validator, service, controller, routes), registrados no app.js
+- [x] A ordem dos erros: 401 → 400 (motivo) → 400 (id) → 404 → 400 (própria receita) → 409
+- [x] As três ações criam o aviso dentro da transação, com o t; curtir e seguir também o apagam ao desfazer
+- [x] Exclusão da receita limpa denúncias e notificações, antes do destroy da receita
+- [x] cors antes do express.json() no app.js
+- [x] Teste de controle feito e descrito (as duas partes): sem o destroy das denúncias, 500 "Cannot delete or update a parent row: a foreign key constraint fails (reports...)" (controle-reports.jpg); sem o destroy das notificações, 200 e sobrou um aviso de like com recipe_id NULL (controle-orfa.jpg), que foi apagado depois
+- [x] Os onze testes da Etapa 5 executados com sucesso (curl-1 a curl-11, com curl-2b, curl-7b e curl-9b; o teste 8 é no MySQL: curl-8.jpg e banco-notificacoes.jpg)
+
+### Parte B — Frontend
+
+Checagem de alcançabilidade:
+
+| Peça | Caminho de clique |
+|---|---|
+| Notificações | Sino na Navbar (visível em todas as telas, só para quem está logado) |
+| Marcar como lida | Botão "Marcar como lida" na linha e clique na própria notificação |
+| Ir ao que gerou o aviso | Clique no texto: a receita (curtir/comentar) ou o perfil de quem seguiu (seguir) |
+| Ver as mais antigas / as novas | "Carregar mais notificações" no fim / "Atualizar" no topo |
+| Denunciar | Botão "Denunciar" no Detalhe da receita (visitante → login → volta; o dono não vê) |
+
+Verificação antes de programar: a rota `/notifications` já existia no `router/index.js` desde a Aula 01, com `requiresAuth` e o nome `notifications`, o mesmo que a Navbar usa em `{ name: 'notifications' }`. O arquivo `NotificationsView.vue` existia como placeholder e foi substituído pela tela.
+
+Decisão de escopo (lacuna conhecida): a lista de notificações não se atualiza sozinha; só o número do sino. Para ver avisos novos na lista, é preciso clicar em "Atualizar".
+
+Observações:
+- O toast passou a aparecer abaixo da Navbar (top: 5rem), para não cobrir o sino.
+- A lista usa o mesmo tamanho de página dos feeds (`PAGE_SIZE`, 3), então o "Carregar mais notificações" já aparece a partir da 4ª notificação.
+- O `usePaginatedList` ganhou a opção `itemsKey` (a API devolve `notifications` em vez de `recipes`), e o `BaseModal` ganhou a prop `busy` (não fecha enquanto envia). Os dois modais de formulário (lista e denúncia) usam o `busy`.
+
+- [x] Constantes (NOTIFICATIONS.POLL_MS, NOTIFICATION_TEXT, REPORT_REASONS), os dois services e a store com as cinco funções
+- [x] removeEventListener recebe a mesma referência do addEventListener (refreshIfVisible)
+- [x] O sino aparece só para quem está logado; o selo só com não lidas
+- [x] O número se atualiza sozinho; um só temporizador depois de logins e logouts repetidos; nenhuma requisição ao sair da conta
+- [x] Lista paginada, estado vazio, "Atualizar" e "Carregar mais"
+- [x] Marcar como lida: otimista, rollback com toast, uma requisição por clique duplo, e o sino certo mesmo com duas linhas falhando juntas
+- [x] Modal com os cinco rádios; motivo obrigatório; erro dentro do modal e sem toast; toast de sucesso
+- [x] O dono da receita não vê o botão "Denunciar"
+- [x] Logout com o Console limpo
+- [x] Os nove passos do teste prático completo, a partir do login
+- [x] respostas.md com as dez perguntas
+

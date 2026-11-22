@@ -12,6 +12,8 @@ import { getRecipeImageUrl, getProfilePictureUrl } from '../utils/media'
 import LikeButton     from '../components/recipe/LikeButton.vue'
 import CommentSection from '../components/recipe/CommentSection.vue'
 import AddToListModal from '../components/list/AddToListModal.vue'
+import ReportRecipeModal from '../components/recipe/ReportRecipeModal.vue'
+import { useToast } from '../composables/useToast'
 
 const route  = useRoute()
 const router = useRouter()
@@ -34,6 +36,18 @@ const isSaveModalOpen = ref(false)
 const { run: openSaveModal, isBusy: isOpeningSave } = useAuthenticatedAction(async () => {
   isSaveModalOpen.value = true
 })
+
+// Botão Denunciar (Aula 14): o dono não vê; visitante vai para o login e volta
+const toast = useToast()
+const isReportModalOpen = ref(false)
+const { run: openReportModal, isBusy: isOpeningReport } = useAuthenticatedAction(async () => {
+  isReportModalOpen.value = true
+})
+
+function handleReported() {
+  isReportModalOpen.value = false
+  toast.success('Denúncia enviada. Obrigado por avisar.')
+}
 
 function onCommentAdded() {
   if (recipe.value) recipe.value.commentsCount++
@@ -114,6 +128,15 @@ function onCommentAdded() {
             >
               <i class="bi bi-pencil me-2" />Editar
             </router-link>
+            <!-- Botão Denunciar (Aula 14) — invisível para o dono -->
+            <button
+              v-if="!isOwner"
+              class="btn btn-action btn-report"
+              :disabled="isOpeningReport"
+              @click="openReportModal"
+            >
+              <i class="bi bi-flag me-2" />Denunciar
+            </button>
           </div>
         </div>
       </div>
@@ -142,6 +165,13 @@ function onCommentAdded() {
         v-if="isSaveModalOpen"
         :recipe-id="recipe.id"
         @close="isSaveModalOpen = false"
+      />
+
+      <ReportRecipeModal
+        v-if="isReportModalOpen"
+        :recipe-id="recipe.id"
+        @close="isReportModalOpen = false"
+        @reported="handleReported"
       />
     </div>
   </div>
@@ -286,6 +316,10 @@ function onCommentAdded() {
 .btn-action:hover {
   border-color: var(--brand-color);
   color: var(--brand-color);
+}
+.btn-report:hover {
+  border-color: #dc3545;
+  color: #dc3545;
 }
 .recipe-sections {
   display: grid;

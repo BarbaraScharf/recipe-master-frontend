@@ -26,7 +26,8 @@ const { toasts, remove } = useToast()
 /* z-index acima do BaseModal (1050) para o aviso aparecer mesmo com modal aberto */
 .toast-container-app {
   position: fixed;
-  top: 1rem;
+  /* abaixo da Navbar, para não cobrir o sino nem o menu do usuário */
+  top: 5rem;
   right: 1rem;
   z-index: 2000;
   display: flex;
@@ -58,4 +59,5 @@ const { toasts, remove } = useToast()
   cursor: pointer;
 }
 </style>
+
 

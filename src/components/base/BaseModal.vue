@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * BaseModal — modal genérico reutilizável.
  *
@@ -18,13 +18,19 @@ import { onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   show:  { type: Boolean, required: true },
-  title: { type: String, default: '' }
+  title: { type: String, default: '' },
+  // Enquanto algo está sendo enviado, o modal não fecha (Esc, X ou clique fora)
+  busy:  { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['close'])
 
+function requestClose() {
+  if (!props.busy) emit('close')
+}
+
 function handleKeydown(e) {
-  if (e.key === 'Escape' && props.show) emit('close')
+  if (e.key === 'Escape' && props.show) requestClose()
 }
 
 onMounted(() => document.addEventListener('keydown', handleKeydown))
@@ -37,7 +43,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
       <div
         v-if="show"
         class="modal-overlay"
-        @mousedown.self="emit('close')"
+        @mousedown.self="requestClose"
         role="dialog"
         aria-modal="true"
         :aria-label="title"
@@ -48,7 +54,8 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
             <h5 class="modal-title-text">{{ title }}</h5>
             <button
               class="modal-close-btn"
-              @click="emit('close')"
+              :disabled="busy"
+              @click="requestClose"
               aria-label="Fechar"
             >
               <i class="bi bi-x-lg" />
@@ -142,3 +149,4 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
   opacity: 0;
 }
 </style>
+

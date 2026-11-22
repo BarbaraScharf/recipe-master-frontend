@@ -9,7 +9,9 @@ export function login(payload) {
 }
 
 export function logout() {
-  return api.post('/logout', null, { silent: true })
+  // undefined (e não null): com null, o Axios manda o texto "null" como JSON,
+  // o express.json() recusa com 400 e o Console mostrava um erro vermelho ao sair
+  return api.post('/logout', undefined, { silent: true })
 }
 
 export function getMyProfile() {
