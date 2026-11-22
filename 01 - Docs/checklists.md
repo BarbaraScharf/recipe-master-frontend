@@ -520,3 +520,67 @@ Observação: a busca de usuários por nome não faz parte desta aula (a tela "B
 
 
 
+
+---
+## Aula 13
+
+### Nomes no meu projeto
+| Nome | Shortz-App | RecipeMaster |
+|---|---|---|
+| Coleção do usuário | Playlist | Lista (model `RecipeList`, tabela `recipe_lists`) |
+| Model da junção | PlaylistVideo (`playlist_videos`) | `RecipeListItem` (`recipe_list_items`) |
+| Contador de itens na coleção | videosCount | recipesCount |
+| Rotas | /api/my-playlists, /api/playlists | /api/my-lists, /api/lists |
+| Rota do status | /api/videos/:videoId/playlists-status | /api/recipes/:recipeId/lists-status |
+| Campo de texto da busca | title | title (da receita) |
+| Campo do status | hasVideo | hasRecipe |
+| Telas | MyPlaylistsView, PlaylistDetailView | MyListsView, ListDetailView |
+
+### Parte A — Backend
+- [x] Constantes LIST_TITLE_MIN/MAX, LIST_DESCRIPTION_MAX e o bloco SEARCH criados
+- [x] parseId com a mensagem "Identificador de <label> inválido." e usado pelo followController (parseUserId apagado). GET /users/abc/followers continua 400 (a mensagem mudou para "Identificador de usuário inválido.", o mesmo padrão dos outros módulos)
+- [x] Dois models (listModel, listItemModel) e seis associações
+- [x] Tabelas, índices (idx_recipe_lists_user_id, idx_unique_list_recipe, idx_list_items_recipe_id) e chaves estrangeiras com ON DELETE CASCADE conferidos com SHOW CREATE TABLE
+- [x] Quatro arquivos do módulo list (validator, service, controller, routes), registrados no app.js
+- [x] Duas escritas (linha + contador) numa só transação ao adicionar, remover e excluir
+- [x] 403 para lista privada de outra pessoa; isOwner certo para dona, outra conta e visitante
+- [x] Busca consultando o banco, com escapeLike, Promise.all e entrada tratada (typeof, trim, mínimo e máximo)
+- [x] searchController async/await e rota com asyncHandler
+- [x] Exclusão da receita limpa a junção e desconta o contador de cada lista, na mesma transação
+- [x] Teste de controle feito e descrito: com o bloco comentado, a Rapida 2 ficou com recipesCount 2 tendo 1 linha na junção (contador-controle.jpg); com o bloco de volta, o contador caiu para 1 (contador-certo.jpg)
+- [x] Os onze testes da Etapa 6 executados com sucesso (curl-1 a curl-11; o teste 10 é a linha repetida na junção, feito no MySQL: curl-10.jpg e colecoes-banco.jpg, com ERROR 1062)
+
+### Parte B — Frontend
+
+Checagem de alcançabilidade:
+
+| Peça | Caminho de clique |
+|---|---|
+| Minhas Listas | Menu do avatar → "Minhas Listas" (novo) e Sidebar → "Minhas Listas" (novo) |
+| Criar / excluir lista | Botão "Nova lista" na própria tela (modal); "Excluir" em cada cartão (confirmação) |
+| Detalhe da lista | Clique no cartão, na tela Minhas Listas |
+| Salvar uma receita | Botão "Salvar" no Detalhe da receita (visitante → login → volta à receita) |
+| Remover uma receita da lista | Botão "Remover da lista" em cada cartão, no detalhe da lista (só para a dona) |
+| Busca | Barra da Navbar (Enter) e item "Explorar" da Sidebar |
+
+Verificação antes de programar: as três rotas já existiam no `router/index.js` desde a Aula 01 (`my-lists` com requiresAuth, `list-detail` pública, `search`). O nome `search` é o mesmo usado no `router.push`. Na Sidebar, troquei "Buscar Receitas" por "Explorar" (aponta para `/search`) e acrescentei "Minhas Listas" (aponta para `/my-lists`). Na Navbar, o link "Buscar" virou a barra de busca.
+
+Observação: o Feed exige login desde a Aula 08, mas a busca é pública (o enunciado pede a barra visível também para visitante). Então o visitante não vê o Feed, mas acha as mesmas receitas pela busca. Mantive assim porque segue os dois enunciados. Deixar isso coerente fica para a Aula 16 (Polimento de UX/UI).
+
+Decisão de escopo (lacuna conhecida): a lista pública de outra pessoa só é alcançável por link. Nenhuma tela mostra as listas públicas de alguém (por exemplo, no perfil público). Não resolvi de propósito, como o enunciado pede.
+
+- [x] Constantes (LIST_TITLE_MIN/MAX, LIST_DESCRIPTION_MAX, SEARCH), listService com as sete funções. A Home não chamava search(), então não tinha nada para limpar
+- [x] runOptimistic criado em utils/optimistic.js
+- [x] Os dois botões refatorados e testados sem regressão (otimista, Offline com rollback e toast, visitante → login → volta)
+- [x] Modal de criação, lista e detalhe funcionando, com 403/404 na própria tela
+- [x] Cartão clicável com botão "Excluir" funcionando por cima do link esticado
+- [x] Modal "Salvar" com caixas marcadas conforme o servidor, otimista, com rollback e uma cerca por linha (salvar-modal, otimista-modal e rollback-modal)
+- [x] Botão "Salvar" no Detalhe, com o comportamento do visitante
+- [x] Digitar uma palavra inteira sem pausa gera uma requisição (debounce.jpg)
+- [x] Termo na URL: F5 e link funcionam; Navbar leva à busca já com o termo; Voltar não passa por cada pausa
+- [x] Os seis passos do teste prático completo, a partir do login, sem digitar URL
+- [x] respostas.md com as oito perguntas
+
+
+
+

@@ -14,6 +14,9 @@ export const LIMITS = {
   INSTRUCTIONS_MAX: 5000,
   BIO_MAX: 255,
   COMMENT_MAX: 500,
+  LIST_TITLE_MIN: 3,
+  LIST_TITLE_MAX: 100,
+  LIST_DESCRIPTION_MAX: 500,
 }
 
 // Tamanho de página dos feeds. O backend aceita no máximo 50 (PAGINATION.MAX_LIMIT).
@@ -29,3 +32,9 @@ export const MESSAGES = {
   NETWORK_ERROR: 'Não foi possível se conectar ao servidor. Verifique sua conexão ou tente mais tarde.',
   REQUEST_SETUP_ERROR: 'Erro inesperado ao preparar a requisição.',
 }
+
+export const SEARCH = {
+  MIN_LENGTH: 2,
+  DEBOUNCE_MS: 400,
+}
+

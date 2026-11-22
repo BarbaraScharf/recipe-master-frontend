@@ -52,8 +52,10 @@ function goToDetail(event) {
         :alt="recipe.title"
         class="recipe-card-img"
       />
+      <!-- Receita sem foto: fundo na cor da marca com ícone e categoria, em vez de um cinza vazio -->
       <div v-else class="recipe-card-img-placeholder">
-        <i class="bi bi-image text-muted" style="font-size:2rem;" />
+        <i class="bi bi-egg-fried" />
+        <span>{{ recipe.category || 'Receita' }}</span>
       </div>
     </div>
 
@@ -132,6 +134,28 @@ function goToDetail(event) {
   height: 200px;
   object-fit: cover;
   display: block;
+}
+.recipe-card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #fff3ec, #ffd9c6);
+  color: var(--brand-color);
+}
+.recipe-card-img-placeholder i {
+  font-size: 2.6rem;
+  opacity: 0.85;
+}
+.recipe-card-img-placeholder span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
 }
 
 .recipe-card-body {

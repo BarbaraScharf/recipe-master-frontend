@@ -1,6 +1,7 @@
 ﻿<script setup>
 import { useAuthenticatedAction } from '../../composables/useAuthenticatedAction'
 import { toggleFollow } from '../../services/followService'
+import { runOptimistic } from '../../utils/optimistic'
 
 const props = defineProps({
   userId: { type: Number, required: true }
@@ -10,27 +11,28 @@ const following = defineModel('following', { type: Boolean, default: false })
 const followersCount = defineModel('followersCount', { type: Number, default: 0 })
 
 // useAuthenticatedAction cuida do visitante (vai para o login) e de cliques repetidos (isBusy).
-// O erro da API aparece como toast, aqui só desfazemos a mudança visual.
-const { run: handleClick, isBusy } = useAuthenticatedAction(async () => {
-  const previousFollowing = following.value
-  const previousFollowersCount = followersCount.value
-  const nowFollowing = !previousFollowing
-
-  following.value = nowFollowing
-  followersCount.value = Math.max(
-    0,
-    previousFollowersCount + (nowFollowing ? 1 : -1)
-  )
-
-  try {
-    const response = await toggleFollow(props.userId)
-    following.value = response.data.isFollowing
-    followersCount.value = response.data.followersCount
-  } catch {
-    following.value = previousFollowing
-    followersCount.value = previousFollowersCount
-  }
-})</script>
+// runOptimistic cuida dos três passos: muda na hora, chama a API, desfaz se falhar.
+const { run: handleClick, isBusy } = useAuthenticatedAction(() => runOptimistic({
+  apply: () => {
+    const previousFollowing = following.value
+    const previousFollowersCount = followersCount.value
+    // Variável local com o novo estado: com defineModel, ler following.value
+    // logo depois de atribuir ainda devolve o valor antigo
+    const nowFollowing = !previousFollowing
+    following.value = nowFollowing
+    followersCount.value = Math.max(0, previousFollowersCount + (nowFollowing ? 1 : -1))
+    return () => {
+      following.value = previousFollowing
+      followersCount.value = previousFollowersCount
+    }
+  },
+  request: () => toggleFollow(props.userId),
+  confirm: (data) => {
+    following.value = data.isFollowing
+    followersCount.value = data.followersCount
+  },
+}))
+</script>
 
 <template>
   <div class="follow-button-wrapper">
@@ -58,4 +60,5 @@ const { run: handleClick, isBusy } = useAuthenticatedAction(async () => {
 }
 
 </style>
+
 

@@ -7,7 +7,9 @@
  *     Minhas Receitas, Sair.
  *   - Fecha ao clicar fora (useClickOutside), ao pressionar Esc,
  *     ou ao escolher um item.
- *   - Links públicos mantidos: Feed, Buscar.
+ *   - Links públicos mantidos: Feed.
+ *   - Aula 13: barra de busca (Enter leva a /search?q=...), visível também
+ *     para visitante, e o item "Minhas Listas" no menu do avatar.
  */
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -19,6 +21,15 @@ const { authStore, logout: logoutStore } = useAuth()
 const router = useRouter()
 
 const menuOpen   = ref(false)
+const searchText = ref('')
+
+// Enter na barra de busca: ignora vazio, abre a busca com o termo e limpa o campo
+function submitSearch() {
+  const q = searchText.value.trim()
+  if (!q) return
+  router.push({ name: 'search', query: { q } })
+  searchText.value = ''
+}
 const menuRef    = ref(null)
 
 useClickOutside(menuRef, () => { menuOpen.value = false })
@@ -56,9 +67,19 @@ async function handleLogout() {
       <router-link class="nav-link text-white navbar-nav-link" to="/feed">
         <i class="bi bi-grid me-1" />Feed
       </router-link>
-      <router-link class="nav-link text-white navbar-nav-link" to="/search">
-        <i class="bi bi-search me-1" />Buscar
-      </router-link>
+      <!-- Busca (Aula 13): visível também para visitante -->
+      <form role="search" class="navbar-search" @submit.prevent="submitSearch">
+        <input
+          v-model="searchText"
+          type="search"
+          class="navbar-search-input"
+          placeholder="Buscar receitas ou pessoas"
+          aria-label="Buscar receitas ou pessoas"
+        />
+        <button type="submit" class="navbar-search-btn" aria-label="Buscar">
+          <i class="bi bi-search" />
+        </button>
+      </form>
 
       <!-- Estado logado: menu suspenso no avatar -->
       <template v-if="authStore.isAuthenticated">
@@ -98,6 +119,14 @@ async function handleLogout() {
               role="menuitem"
             >
               <i class="bi bi-journal-text me-2" />Minhas Receitas
+            </router-link>
+            <router-link
+              class="dropdown-item-link"
+              to="/my-lists"
+              @click="closeMenu"
+              role="menuitem"
+            >
+              <i class="bi bi-collection me-2" />Minhas Listas
             </router-link>
             <hr class="dropdown-divider my-1" />
             <button class="dropdown-item-link text-danger" @click="handleLogout" role="menuitem">
@@ -207,6 +236,31 @@ async function handleLogout() {
   transition: background 0.15s, color 0.15s;
 }
 
+.navbar-search {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  padding: 0.15rem 0.25rem 0.15rem 0.9rem;
+}
+.navbar-search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  width: 220px;
+  font-size: 0.95rem;
+}
+.navbar-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.85);
+}
+.navbar-search-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+}
 .navbar-btn-outline:hover {
   background: rgba(255,255,255,0.2);
   color: #fff !important;

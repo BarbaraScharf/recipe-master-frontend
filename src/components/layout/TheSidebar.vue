@@ -4,7 +4,7 @@
  * Usa useAuth() (Aula 06) para mostrar links condicionalmente.
  *
  * Links públicos (sempre visíveis):
- *   - Início, Feed, Buscar Receitas
+ *   - Início, Feed, Explorar (busca, Aula 13)
  *
  * Links visíveis apenas quando logado (Aula 06+):
  *   - Nova Receita    → módulo recipes (construído na Aula 07)
@@ -12,7 +12,7 @@
  *   - Meu Perfil      → funcional desde Aula 05
  *
  * Links pendentes para aulas futuras:
- *   - Minhas Listas   → módulo lists (Aula futura)
+ *   - Minhas Listas   → módulo lists (Aula 13)
  *   - Notificações    → módulo notifications (Aula futura)
  *   - Admin           → painel admin (Aula futura)
  */
@@ -32,7 +32,7 @@ const { authStore } = useAuth()
         <i class="bi bi-grid me-2" />Feed
       </router-link>
       <router-link class="sidebar-link" to="/search">
-        <i class="bi bi-search me-2" />Buscar Receitas
+        <i class="bi bi-search me-2" />Explorar
       </router-link>
 
       <!-- Links visíveis apenas quando logado -->
@@ -53,11 +53,10 @@ const { authStore } = useAuth()
         <router-link class="sidebar-link" to="/following-recipes">
           <i class="bi bi-people me-2" />Seguindo
         </router-link>
-        <!--
-          Links adicionados quando os módulos estiverem prontos:
-          Minhas Listas    → Aula 13
-          Notificações     → Aula 14
-        -->
+        <router-link class="sidebar-link" to="/my-lists">
+          <i class="bi bi-collection me-2" />Minhas Listas
+        </router-link>
+        <!-- Notificações → Aula 14 -->
       </template>
     </nav>
   </aside>

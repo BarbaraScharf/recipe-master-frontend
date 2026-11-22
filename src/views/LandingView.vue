@@ -27,14 +27,63 @@ onMounted(async () => {
     <div class="d-flex justify-content-center gap-3 mt-4">
       <!-- Só mostra "Criar conta" quando não está logada -->
       <router-link v-if="!authStore.isAuthenticated" to="/register" class="btn btn-brand btn-lg px-4">Criar conta</router-link>
-      <router-link to="/feed" class="btn btn-outline-secondary btn-lg px-4">Explorar receitas</router-link>
+      <!-- Visitante não acessa o Feed (exige login), então vai para a busca, que é pública -->
+      <router-link
+        :to="authStore.isAuthenticated ? { name: 'feed' } : { name: 'search' }"
+        class="btn btn-outline-secondary btn-lg px-4"
+      >
+        Explorar receitas
+      </router-link>
+    </div>
+
+    <div class="landing-features">
+      <div class="feature">
+        <div class="feature-icon"><i class="bi bi-search" /></div>
+        <h6 class="fw-bold mb-1">Encontre</h6>
+        <p class="text-muted small mb-0">Busque receitas pelo nome e descubra outros cozinheiros.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="bi bi-bookmark-heart" /></div>
+        <h6 class="fw-bold mb-1">Guarde</h6>
+        <p class="text-muted small mb-0">Curta as favoritas e organize tudo em listas suas.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="bi bi-people" /></div>
+        <h6 class="fw-bold mb-1">Acompanhe</h6>
+        <p class="text-muted small mb-0">Siga quem você gosta e veja as receitas novas no feed.</p>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 3.5rem;
+}
+.feature {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+.feature-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  background: #fff0eb;
+  color: var(--brand-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
 .landing {
-  max-width: 700px;
+  max-width: 760px;
   margin: 4rem auto;
 }
 

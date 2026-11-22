@@ -1,6 +1,6 @@
 ﻿import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { login as loginService, logout as logoutService } from '../services/authService'
+import { login as loginService, logout as logoutService, getMyProfile } from '../services/authService'
 
 import { STORAGE_KEYS } from '../config/constants'
 
@@ -38,6 +38,22 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem(USER_KEY, JSON.stringify(user.value))
   }
 
+  // Busca o perfil atual na API e atualiza o usuário salvo (foto, nome...).
+  // Chamado quando o app abre: o que estava no localStorage pode ser de um login antigo.
+  async function refreshUser() {
+    if (!token.value) return
+    try {
+      const response = await getMyProfile()
+      updateUser({
+        fullName: response.data.fullName,
+        bio: response.data.bio,
+        profilePicture: response.data.profilePicture,
+      })
+    } catch {
+      // sem rede: fica com o que já estava salvo; 401 já é tratado pelo interceptor
+    }
+  }
+
   function clearSession() {
     token.value = null
     user.value = null
@@ -45,7 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(USER_KEY)
   }
 
-  return { token, user, isAuthenticated, isAdmin, login, logout, updateUser, clearSession }
+  return { token, user, isAuthenticated, isAdmin, login, logout, updateUser, refreshUser, clearSession }
 })
 
 

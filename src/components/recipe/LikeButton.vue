@@ -16,6 +16,7 @@
 import { ref, watch } from 'vue'
 import { toggleLike } from '../../services/likeService'
 import { useAuthenticatedAction } from '../../composables/useAuthenticatedAction'
+import { runOptimistic } from '../../utils/optimistic'
 import { formatCount } from '../../utils/format'
 
 const props = defineProps({
@@ -34,27 +35,26 @@ watch(() => props.liked,      v => { localLiked.value      = v })
 watch(() => props.likesCount, v => { localLikesCount.value = v })
 
 // useAuthenticatedAction cuida do visitante (vai para o login) e de cliques repetidos (isBusy).
-// O erro da API aparece como toast, aqui só desfazemos a mudança visual.
-const { run: handleClick, isBusy } = useAuthenticatedAction(async () => {
-  // Passo 1 — atualiza UI imediatamente (otimista)
-  const previousLiked      = localLiked.value
-  const previousLikesCount = localLikesCount.value
-  localLiked.value      = !localLiked.value
-  localLikesCount.value = localLiked.value ? previousLikesCount + 1 : previousLikesCount - 1
-
-  try {
-    // Passo 2 — chama a API e sincroniza com o valor real
-    const response = await toggleLike(props.recipeId)
-    localLiked.value      = response.data.liked
-    localLikesCount.value = response.data.likesCount
+// runOptimistic cuida dos três passos: muda na hora, chama a API, desfaz se falhar.
+const { run: handleClick, isBusy } = useAuthenticatedAction(() => runOptimistic({
+  apply: () => {
+    const previousLiked      = localLiked.value
+    const previousLikesCount = localLikesCount.value
+    localLiked.value      = !previousLiked
+    localLikesCount.value = previousLiked ? previousLikesCount - 1 : previousLikesCount + 1
+    return () => {
+      localLiked.value      = previousLiked
+      localLikesCount.value = previousLikesCount
+    }
+  },
+  request: () => toggleLike(props.recipeId),
+  confirm: (data) => {
+    localLiked.value      = data.liked
+    localLikesCount.value = data.likesCount
     emit('update:liked',      localLiked.value)
     emit('update:likesCount', localLikesCount.value)
-  } catch {
-    // Passo 3 — rollback
-    localLiked.value      = previousLiked
-    localLikesCount.value = previousLikesCount
-  }
-})
+  },
+}))
 </script>
 
 <template>
@@ -113,6 +113,7 @@ const { run: handleClick, isBusy } = useAuthenticatedAction(async () => {
 }
 
 </style>
+
 
 
 

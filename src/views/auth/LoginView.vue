@@ -47,7 +47,6 @@ async function handleSubmit() {
 
   try {
     await authStore.login(form.email, form.password)
-    console.log('Perfil autenticado OK:', authStore.user)
     const redirect = route.query.redirect || '/feed'
     router.push(redirect)
   } catch (error) {
