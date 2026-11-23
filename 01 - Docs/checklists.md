@@ -646,3 +646,71 @@ Observações:
 - [x] Os nove passos do teste prático completo, a partir do login
 - [x] respostas.md com as dez perguntas
 
+
+---
+## Aula 15
+
+### Nomes no meu projeto
+| Nome | Shortz-App | RecipeMaster |
+|---|---|---|
+| Rota da lista de itens do painel | GET /api/admin/videos | GET /api/admin/recipes |
+| Rota de excluir pelo painel | DELETE /api/admin/videos/:id | DELETE /api/admin/recipes/:id |
+| Função de excluir (com isAdmin) | videoService.deleteVideo(id, userId, isAdmin) | recipeService.deleteRecipe(id, userId, isAdmin) |
+| Campo de texto da busca de itens | title | title |
+| Id do item nas denúncias | videoId | recipeId |
+| Telas e rotas do front | AdminVideosView, admin-videos | AdminRecipesView, admin-recipes |
+| Textos do painel | "Vídeos", "Excluir vídeo", "Denunciado por..." | "Receitas", "Excluir receita", "Denunciado por..." |
+| Chave do token no localStorage | shortz_token / shortz_user | auth_token / auth_user |
+
+Contas de teste: ADMIN = `admin` (admin@recipemaster.com, promovido com `node scripts/setAdmin.js admin`), A = `teste123` (dona da maioria das receitas), B = `barbara` (dona da "Teste toast 2"), C = `batata`. Senha de todas: 123456.
+
+### Parte A — Backend
+- [x] Constantes (REPORT.STATUS e ADMIN.REPORT_FILTERS), model de denúncia com status, reviewedAt e o índice idx_reports_status
+- [x] Banco com status e reviewed_at; as 4 denúncias antigas ficaram pending (graças ao defaultValue)
+- [x] isAuthenticated assíncrono, consultando o banco, e isAdmin exportados; as rotas antigas continuam funcionando sem alteração
+- [x] Login de bloqueado → 403 (a checagem vem depois da senha; senha errada de um bloqueado continua com "Credenciais inválidas.")
+- [x] escapeLike em utils/ (busca pública e painel); scripts/setAdmin.js promovendo e rebaixando
+- [x] Quatro arquivos em modules/admin/, registrados no app.js depois das rotas de denúncia
+- [x] GET /api/admin/dashboard sem token responde 401 (e não 404)
+- [x] A exclusão do painel não tem uma linha nova de destroy: reaproveita o deleteRecipe com isAdmin = true
+- [x] Os dois testes de controle feitos, desfeitos e descritos: sem o if (user.isBlocked), o token antigo da barbara bloqueada respondeu 200 (controle-bloqueio.jpg); sem o isAdmin no router.use, a teste123 (usuária comum) abriu o dashboard com 200 e todos os números (controle-isadmin.jpg)
+- [x] Os nove testes da Etapa 5 executados com sucesso (curl-1 a curl-9, com curl-2b, curl-6b, curl-8b e curl-8c)
+
+Observação: o login com senha errada respondia 500 (o erro não tinha status). Passou a responder 401, com a mesma mensagem "Credenciais inválidas.".
+
+### Parte B — Frontend
+
+Checagem de alcançabilidade:
+
+| Peça | Caminho de clique |
+|---|---|
+| Painel de administração | Barra lateral → seção "Administração" (só para administrador) → "Painel" (aponta para /admin, que redireciona ao Dashboard) |
+| Denúncias | Aba "Denúncias" e o cartão vermelho de denúncias pendentes do Dashboard |
+| Usuários / Receitas | As abas do painel |
+| Revisar / Bloquear / Excluir | Botões na linha (bloquear e excluir abrem confirmação; desbloquear é direto) |
+| Filtrar / buscar | Grupo de botões (Denúncias); campo com debounce (Usuários e Receitas) |
+| Ver o item / o perfil | Miniatura ou título (Denúncias e Receitas); @usuário (Usuários) |
+
+Verificação antes de programar: as quatro rotas admin-* existiam desde a Aula 01 com requiresAdmin, e os quatro arquivos de views/admin/ existiam como placeholders. A barra lateral **não tinha** o link do administrador (ele tinha sido tirado porque o painel ainda não existia). Acrescentei a seção "Administração" com o link para /admin, visível só para administrador.
+
+Limitação conhecida: a paginação por offset pula itens quando a lista muda entre uma página e a próxima (por exemplo, revisar uma denúncia antes do "Carregar mais"). O conserto (paginação por cursor) fica para a Aula 18.
+
+Observação: no teste do pulo, com PAGE_SIZE = 2 (temporário), revisei a primeira pendente antes do "Carregar mais" e uma denúncia da @testes12345 (id 20) não apareceu na tela, embora estivesse na lista do servidor (pulo-paginacao.jpg). O "Atualizar" a trouxe de volta. O PAGE_SIZE voltou para 3.
+
+Observação: o texto branco do cartão de pendentes e o título da página inicial precisaram de !important, porque o style.css global tem a { color: inherit !important }.
+
+Observação: a guarda por papel do front lê o isAdmin salvo no login. Quem é promovido precisa sair e entrar de novo para ver a seção Administração.
+
+- [x] Constantes (REPORT_FILTERS), adminService com as sete chamadas, usePaginatedList com a opção watch e a guarda contra resposta velha, e o ConfirmModal
+- [x] Feed, Seguindo, Notificações e Listas continuam abrindo e carregando mais
+- [x] /admin abre o Dashboard; as abas aparecem com a atual destacada; as telas vêm dentro do layout
+- [x] Visitante → Login (?redirect=); usuário comum → Feed com aviso
+- [x] Dashboard com os cartões e o link para as denúncias; erro 403 mostrado no lugar dos números
+- [x] Denúncias: filtro que recarrega, motivo em português, revisar que espera a API
+- [x] Busca com debounce (uma requisição depois da pausa) e sem perder o foco
+- [x] Bloquear com confirmação (cancelar e falha mantêm o estado); desbloquear direto
+- [x] Excluir receita com confirmação que descreve a consequência
+- [x] Os nove passos do teste prático completo
+- [x] respostas.md com as dez perguntas
+
+

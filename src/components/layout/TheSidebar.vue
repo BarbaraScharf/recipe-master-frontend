@@ -13,8 +13,8 @@
  *
  * Links pendentes para aulas futuras:
  *   - Minhas Listas   → módulo lists (Aula 13)
- *   - Notificações    → módulo notifications (Aula futura)
- *   - Admin           → painel admin (Aula futura)
+ *   - Notificações    → pelo sino da Navbar (Aula 14)
+ *   - Admin           → seção "Administração", só para administrador (Aula 15)
  */
 import { useAuth } from '../../composables/useAuth'
 
@@ -56,7 +56,16 @@ const { authStore } = useAuth()
         <router-link class="sidebar-link" to="/my-lists">
           <i class="bi bi-collection me-2" />Minhas Listas
         </router-link>
-        <!-- Notificações → Aula 14 -->
+        <!-- Notificações: pelo sino da Navbar (Aula 14) -->
+      </template>
+
+      <!-- Administração (Aula 15): só para administrador. /admin redireciona para o Dashboard -->
+      <template v-if="authStore.isAuthenticated && authStore.isAdmin">
+        <hr class="sidebar-divider" />
+        <span class="sidebar-section">Administração</span>
+        <router-link class="sidebar-link" to="/admin">
+          <i class="bi bi-shield-lock me-2" />Painel
+        </router-link>
       </template>
     </nav>
   </aside>
@@ -92,5 +101,13 @@ const { authStore } = useAuth()
 .sidebar-divider {
   margin: 0.5rem 0.75rem;
   border-color: #dee2e6;
+}
+.sidebar-section {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #999;
 }
 </style>

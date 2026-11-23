@@ -51,6 +51,13 @@ export const NOTIFICATION_TEXT = {
 }
 
 // O banco guarda a chave (value); a tela mostra o rótulo (label). Mesma ordem da API.
+// Filtros da aba Denúncias do painel (os value são os mesmos da API)
+export const REPORT_FILTERS = [
+  { value: 'pending', label: 'Pendentes' },
+  { value: 'reviewed', label: 'Revisadas' },
+  { value: 'all', label: 'Todas' },
+]
+
 export const REPORT_REASONS = [
   { value: 'inappropriate_content', label: 'Conteúdo impróprio' },
   { value: 'harassment', label: 'Assédio ou discurso de ódio' },
@@ -58,6 +65,8 @@ export const REPORT_REASONS = [
   { value: 'copyright', label: 'Violação de direitos autorais' },
   { value: 'other', label: 'Outro' },
 ]
+
+
 
 
 

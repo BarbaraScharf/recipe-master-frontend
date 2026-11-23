@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import api from '../services/api'
+import { useToast } from '../composables/useToast'
 
 const routes = [
   { path: '/',               name: 'landing',        component: () => import('../views/LandingView.vue') },
@@ -21,10 +22,20 @@ const routes = [
   { path: '/lists/:id',      name: 'list-detail',    component: () => import('../views/lists/ListDetailView.vue') },
   { path: '/search',         name: 'search',         component: () => import('../views/SearchView.vue') },
   { path: '/notifications',  name: 'notifications',  component: () => import('../views/NotificationsView.vue'),   meta: { requiresAuth: true } },
-  { path: '/admin/dashboard', name: 'admin-dashboard', component: () => import('../views/admin/AdminDashboardView.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-  { path: '/admin/reports',  name: 'admin-reports',  component: () => import('../views/admin/AdminReportsView.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-  { path: '/admin/users',    name: 'admin-users',    component: () => import('../views/admin/AdminUsersView.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
-  { path: '/admin/recipes',  name: 'admin-recipes',  component: () => import('../views/admin/AdminRecipesView.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
+  // Painel (Aula 15): uma rota pai com o layout e a meta; as telas são filhas (path relativo, sem barra).
+  // A meta do pai vale para os filhos (to.meta junta as metas de toda a cadeia).
+  {
+    path: '/admin',
+    component: () => import('../components/layout/AdminLayout.vue'),
+    redirect: { name: 'admin-dashboard' },
+    meta: { requiresAuth: true, requiresAdmin: true },
+    children: [
+      { path: 'dashboard', name: 'admin-dashboard', component: () => import('../views/admin/AdminDashboardView.vue') },
+      { path: 'reports',   name: 'admin-reports',   component: () => import('../views/admin/AdminReportsView.vue') },
+      { path: 'users',     name: 'admin-users',     component: () => import('../views/admin/AdminUsersView.vue') },
+      { path: 'recipes',   name: 'admin-recipes',   component: () => import('../views/admin/AdminRecipesView.vue') },
+    ],
+  },
   { path: '/:pathMatch(.*)*', name: 'not-found',     component: () => import('../views/NotFoundView.vue') },
 ]
 
@@ -57,7 +68,10 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
+  // Guarda por papel (Aula 15). Ela só melhora a experiência (não mostra um painel vazio);
+  // quem protege os dados é a API: cada rota /api/admin confere o isAdmin no banco e responde 403.
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    useToast().error('Você não tem permissão para acessar a administração.')
     return next({ name: 'feed' })
   }
 
